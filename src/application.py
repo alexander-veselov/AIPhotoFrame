@@ -1,0 +1,59 @@
+import pygame
+from stable_diffusion import StableDiffusion
+
+class Application:
+    def __init__(self, params):
+        pygame.init()
+        self.running = False
+        self.params = params
+        self.screen = pygame.display.set_mode(
+            (params.height, params.width) if params.rotate else (params.width, params.height),
+            pygame.FULLSCREEN if params.windowed else 0
+        )
+        self.image_generator = StableDiffusion(
+            self.params.ip, self.params.port,
+            self.screen.get_width(), self.screen.get_height()
+        )
+        pygame.mouse.set_visible(False)
+        pygame.display.set_caption('AI Photo Frame')
+
+    def run(self):
+        self.reneder_welcome_screen()
+        pygame.display.flip()
+
+        self.running = True
+        while self.running:
+            self.process_events(pygame.event.get())
+            self.render()
+
+        pygame.quit()
+        return 0
+    
+    def render(self):
+        image_data = self.image_generator.generate("mountains")
+        self.render_image(image_data)
+        pygame.display.flip()
+    
+    def process_events(self, events):
+        for event in events:
+            if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONUP:
+                self.running = False
+        
+    def render_image(self, image_data):
+        image = pygame.image.load(image_data)
+        image = pygame.transform.smoothscale(image, self.screen.get_size())
+        if self.params.rotate:
+            image = pygame.transform.rotate(image, 90)
+        if self.params.flip:
+            image = pygame.transform.flip(image, flip_x=self.params.rotate, flip_y=not self.params.rotate)
+        self.screen.blit(image, (0, 0))
+        
+    def reneder_welcome_screen(self):
+        pink = (255, 192, 203)
+        white = (255, 255, 255)
+        self.screen.fill(pink)
+        font = pygame.font.SysFont("Cantarell", 74)
+        text = font.render("Hello nya!", True, white)
+        text_rect = text.get_rect()
+        text_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2.5)
+        self.screen.blit(text, text_rect)
