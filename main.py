@@ -38,7 +38,7 @@ def generate_image(ip, port, width, height):
 def main(args):
     pygame.init()
 
-    screen_size = (args.width, args.height)
+    screen_size = (args.height, args.width) if args.rotate else (args.width, args.height)
     screen = pygame.display.set_mode(
         screen_size,
         pygame.FULLSCREEN if args.windowed else 0
@@ -49,13 +49,15 @@ def main(args):
 
     running = True
     while running:
-        image_width = args.width * 2
-        image_height = args.height * 2
+        image_width = screen_size[0] * 2
+        image_height = screen_size[1] * 2
         image_data = generate_image(args.ip, args.port, image_width, image_height)
         image = pygame.image.load(image_data)
-        image = pygame.transform.scale(image, screen_size)
+        image = pygame.transform.smoothscale(image, screen_size)
+        if args.rotate:
+            image = pygame.transform.rotate(image, 90)
         if args.flip:
-            image = pygame.transform.flip(image, flip_x=False, flip_y=True)
+            image = pygame.transform.flip(image, flip_x=args.rotate, flip_y=not args.rotate)
 
         screen.blit(image, (0, 0))
         pygame.display.flip()
@@ -96,7 +98,8 @@ if __name__ == '__main__':
     parser.add_argument('--ip', type=valid_ip, required=True, help="The IP address to connect to.")
     parser.add_argument('--port', type=valid_port, required=True, help="The port number to connect to.")
     parser.add_argument('--windowed', action="store_false")
-    parser.add_argument('--flip', action="store_false")
+    parser.add_argument('--rotate', action="store_true")
+    parser.add_argument('--flip', action="store_true")
     parser.add_argument('--width', required=False, default=480, type=int)
     parser.add_argument('--height', required=False, default=320, type=int)
 
