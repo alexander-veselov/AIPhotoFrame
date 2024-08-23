@@ -65,7 +65,7 @@ class Application:
         self.render_size = (params.height, params.width) if params.rotate else (params.width, params.height)
         self.screen = pygame.display.set_mode(
             (params.width, params.height),
-            pygame.FULLSCREEN if params.windowed else 0
+            pygame.DOUBLEBUF | (pygame.FULLSCREEN if params.windowed else 0)
         )
         self.image_generator = StableDiffusion(params.ip, params.port, self.render_size)
         self.image_provider = ImageProvider(self.image_generator, params.prompt, params.negative_prompt)
