@@ -9,13 +9,11 @@ class Application:
         self.flip = params.flip
         self.prompt = params.prompt
         self.negative_prompt = params.negative_prompt
+        self.render_size = (params.height, params.width) if params.rotate else (params.width, params.height)
+        self.image_generator = StableDiffusion(params.ip, params.port, self.render_size)
         self.screen = pygame.display.set_mode(
-            (params.height, params.width) if params.rotate else (params.width, params.height),
+            (params.width, params.height),
             pygame.FULLSCREEN if params.windowed else 0
-        )
-        self.image_generator = StableDiffusion(
-            params.ip, params.port,
-            self.screen.get_width(), self.screen.get_height()
         )
         pygame.mouse.set_visible(False)
         pygame.display.set_caption('AI Photo Frame')
@@ -44,7 +42,7 @@ class Application:
         
     def render_image(self, image_data):
         image = pygame.image.load(image_data)
-        image = pygame.transform.smoothscale(image, self.screen.get_size())
+        image = pygame.transform.smoothscale(image, self.render_size)
         if self.rotate:
             image = pygame.transform.rotate(image, 90)
         if self.flip:
