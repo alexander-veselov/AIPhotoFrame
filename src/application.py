@@ -4,11 +4,8 @@ import threading
 from stable_diffusion import StableDiffusion
 
 class RenderPipeline:
-    def __init__(self, screen, render_size, rotate, flip, frame_display_time, callback):
+    def __init__(self, screen, frame_display_time, callback):
         self.screen = screen
-        self.render_size = render_size
-        self.rotate = rotate
-        self.flip = flip
         self.frame_display_time = frame_display_time
         self.callback = callback
         self.running = False
@@ -27,16 +24,8 @@ class RenderPipeline:
     def render_frame(self):
         self.callback(self)
 
-    def render_image(self, image_data):
-        image = pygame.image.load(image_data)
-        image = pygame.transform.smoothscale(image, self.render_size)
-        if self.rotate:
-            image = pygame.transform.rotate(image, 90)
-        if self.flip:
-            image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
-        self.screen.blit(image, (0, 0))
-
     def reneder_welcome_screen(self):
+        # TODO: move somewhere
         pink = (255, 192, 203)
         white = (255, 255, 255)
         self.screen.fill(pink)
@@ -47,14 +36,50 @@ class RenderPipeline:
         self.screen.blit(text, text_rect)
 
 class ImageProvider:
-    def __init__(self, generator, prompt, negative_prompt):
+    FADE_DURATION = 5
+
+    def __init__(self, generator, prompt, negative_prompt, render_size, rotate, flip):
         self.prompt = prompt
         self.negative_prompt = negative_prompt
+        self.render_size = render_size
+        self.rotate = rotate
+        self.flip = flip
         self.generator = generator
+        self.image = None
+
+    def create_image(self, image_data):
+        image = pygame.image.load(image_data)
+        image = pygame.transform.smoothscale(image, self.render_size)
+        if self.rotate:
+            image = pygame.transform.rotate(image, 90)
+        if self.flip:
+            image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
+        return image
+
+    def generate_image(self):
+        image_data = self.generator.generate(self.prompt, self.negative_prompt)
+        return self.create_image(image_data)
 
     def render(self, renderer):
-        image_data = self.generator.generate(self.prompt, self.negative_prompt)
-        renderer.render_image(image_data)
+        screen = renderer.screen
+        if self.image is None:
+            self.image = self.generate_image()
+            screen.blit(self.image, (0, 0))
+        else:
+            # TODO: remove magic constants
+            # TODO: create "fade" param
+            # TODO: fix crash on app exit while transition
+            clock = pygame.time.Clock()
+            new_image = self.generate_image()
+            alpha = 0
+            while alpha < 255:
+                alpha += 255 / (ImageProvider.FADE_DURATION * 60)
+                self.image.set_alpha(255 - int(alpha))
+                screen.blit(self.image, (0, 0))
+                new_image.set_alpha(int(alpha))
+                screen.blit(new_image, (0, 0))
+                clock.tick(30)
+            self.image = new_image
 
 class Application:
     def __init__(self, params):
@@ -67,14 +92,21 @@ class Application:
             (params.width, params.height),
             pygame.DOUBLEBUF | (pygame.FULLSCREEN if params.windowed else 0)
         )
-        self.image_generator = StableDiffusion(params.ip, params.port, self.render_size)
-        self.image_provider = ImageProvider(self.image_generator, params.prompt, params.negative_prompt)
+        self.image_generator = StableDiffusion(
+            params.ip, params.port, self.render_size
+        )
+        self.image_provider = ImageProvider(
+            self.image_generator, params.prompt,
+            params.negative_prompt, self.render_size,
+            params.rotate, params.flip
+        )
         self.render_pipeline = RenderPipeline(
-            self.screen, self.render_size,
-            params.rotate, params.flip, params.frame_display_time,
+            self.screen, params.frame_display_time,
             self.image_provider.render
         )
-        self.render_thread = threading.Thread(target=self.render_pipeline.render, daemon=True)
+        self.render_thread = threading.Thread(
+            target=self.render_pipeline.render, daemon=True
+        )
         pygame.mouse.set_visible(False)
         pygame.display.set_caption('AI Photo Frame')
 
