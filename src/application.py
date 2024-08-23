@@ -5,13 +5,16 @@ class Application:
     def __init__(self, params):
         pygame.init()
         self.running = False
-        self.params = params
+        self.rotate = params.rotate
+        self.flip = params.flip
+        self.prompt = params.prompt
+        self.negative_prompt = params.negative_prompt
         self.screen = pygame.display.set_mode(
             (params.height, params.width) if params.rotate else (params.width, params.height),
             pygame.FULLSCREEN if params.windowed else 0
         )
         self.image_generator = StableDiffusion(
-            self.params.ip, self.params.port,
+            params.ip, params.port,
             self.screen.get_width(), self.screen.get_height()
         )
         pygame.mouse.set_visible(False)
@@ -30,7 +33,7 @@ class Application:
         return 0
     
     def render(self):
-        image_data = self.image_generator.generate("mountains")
+        image_data = self.image_generator.generate(self.prompt, self.negative_prompt)
         self.render_image(image_data)
         pygame.display.flip()
     
@@ -42,10 +45,10 @@ class Application:
     def render_image(self, image_data):
         image = pygame.image.load(image_data)
         image = pygame.transform.smoothscale(image, self.screen.get_size())
-        if self.params.rotate:
+        if self.rotate:
             image = pygame.transform.rotate(image, 90)
-        if self.params.flip:
-            image = pygame.transform.flip(image, flip_x=self.params.rotate, flip_y=not self.params.rotate)
+        if self.flip:
+            image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
         self.screen.blit(image, (0, 0))
         
     def reneder_welcome_screen(self):
