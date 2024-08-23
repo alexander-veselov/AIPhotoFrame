@@ -3,16 +3,20 @@ import requests
 import argparse
 import sys
 import base64
+import os
 from io import BytesIO
 
 
-def generate_image(port, width, height):
-    url = 'http://127.0.0.1:{0}/sdapi/v1/txt2img'.format(port)
-    myobj = {
-        "prompt": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, 1girl",
+os.environ['DISPLAY'] = ':0'
+
+
+def generate_image(ip, port, width, height):
+    url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
+    params = {
+        "prompt": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, 1girl, random",
         "negative_prompt": "score_6, score_5, score_4, bad anatomy, nsfw, naked",
         "seed": -1,
-        "steps": 40,
+        "steps": 20,
         "cfg_scale": 7,
         "width": width,
         "height": height,
@@ -21,7 +25,7 @@ def generate_image(port, width, height):
         "hr_scheduler": "Karras",
     }
 
-    response = requests.post(url, json=myobj)
+    response = requests.post(url, json=params)
     if response.status_code == 200:
         response_json = response.json()
         image_data = base64.b64decode(response_json["images"][0])
@@ -47,11 +51,13 @@ def main(args):
     while running:
         image_width = args.width * 2
         image_height = args.height * 2
-        image_data = generate_image(args.port, image_width, image_height)
+        image_data = generate_image(args.ip, args.port, image_width, image_height)
         image = pygame.image.load(image_data)
-        scaled_image = pygame.transform.scale(image, screen_size)
+        image = pygame.transform.scale(image, screen_size)
+        if args.flip:
+            image = pygame.transform.flip(image, flip_x=False, flip_y=True)
 
-        screen.blit(scaled_image, (0, 0))
+        screen.blit(image, (0, 0))
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -65,14 +71,37 @@ def main(args):
     return 0
 
 
+def valid_ip(address):
+    try:
+        parts = address.split('.')
+        if len(parts) != 4:
+            raise ValueError
+        for part in parts:
+            if not 0 <= int(part) <= 255:
+                raise ValueError
+        return address
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"Invalid IP address: '{address}'")
+
+
+def valid_port(port):
+    port = int(port)
+    if not (0 <= port <= 65535):
+        raise argparse.ArgumentTypeError(f"Invalid port number: '{port}'")
+    return port
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='AI Photo Frame',
         description='Displays AI generated images in photo frame'
     )
+    parser.add_argument('--ip', type=valid_ip, required=True, help="The IP address to connect to.")
+    parser.add_argument('--port', type=valid_port, required=True, help="The port number to connect to.")
     parser.add_argument('--windowed', action="store_false")
+    parser.add_argument('--flip', action="store_false")
     parser.add_argument('--width', required=False, default=480, type=int)
     parser.add_argument('--height', required=False, default=320, type=int)
-    parser.add_argument('--port', required=False, default=7861, type=int)
+
     args = parser.parse_args()
     sys.exit(main(args))
