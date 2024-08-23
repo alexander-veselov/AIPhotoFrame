@@ -20,8 +20,8 @@ class StableDiffusion:
             "width": self.width * 2,
             "height": self.height * 2,
             "hr_checkpoint_name": "hassakuXLHentai_v13",
-            "hr_sampler_name": "DPM++ 2M",
-            "hr_scheduler": "Karras",
+            "sampler_name": "DPM++ 2M",
+            "scheduler": "Karras",
         }
 
         response = requests.post(self.url, json=params)
