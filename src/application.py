@@ -1,20 +1,30 @@
+import time
 import pygame
 import threading
 from stable_diffusion import StableDiffusion
 
 class RenderPipeline:
-    def __init__(self, app):
+    def __init__(self, app, frame_display_time):
         # TODO: don't depend from application
         self.app = app
         self.running = False
+        self.frame_display_time = frame_display_time
 
     def render(self):
         self.running = True
         self.reneder_welcome_screen()
         while self.running:
-            # TODO: separate renderer from image generation
-            image_data = self.app.image_generator.generate(self.app.prompt, self.app.negative_prompt)
-            self.render_image(image_data)
+            frame_start_time = time.time()
+            self.render_frame()
+            frame_end_time = time.time()
+            frame_duration = frame_end_time - frame_start_time
+            if frame_duration < self.frame_display_time:
+                time.sleep(self.frame_display_time - frame_duration)
+
+    def render_frame(self):
+        # TODO: separate renderer from image generation
+        image_data = self.app.image_generator.generate(self.app.prompt, self.app.negative_prompt)
+        self.render_image(image_data)
 
     def render_image(self, image_data):
         image = pygame.image.load(image_data)
@@ -49,7 +59,7 @@ class Application:
             pygame.FULLSCREEN if params.windowed else 0
         )
         self.image_generator = StableDiffusion(params.ip, params.port, self.render_size)
-        self.render_pipeline = RenderPipeline(self)
+        self.render_pipeline = RenderPipeline(self, params.frame_display_time)
         self.render_thread = threading.Thread(target=self.render_pipeline.render, daemon=True)
         pygame.mouse.set_visible(False)
         pygame.display.set_caption('AI Photo Frame')
