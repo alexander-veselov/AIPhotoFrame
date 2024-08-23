@@ -13,7 +13,7 @@ os.environ['DISPLAY'] = ':0'
 def generate_image(ip, port, width, height):
     url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
     params = {
-        "prompt": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, 1girl, random",
+        "prompt": "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, mountains",
         "negative_prompt": "score_6, score_5, score_4, bad anatomy, nsfw, naked",
         "seed": -1,
         "steps": 20,
@@ -35,6 +35,17 @@ def generate_image(ip, port, width, height):
         return None
 
 
+def reneder_welcome_screen(screen):
+    pink = (255, 192, 203)
+    screen.fill(pink)
+    font = pygame.font.SysFont("Cantarell", 74)
+    text = font.render("Hello nya!", True, (255, 255, 255))  # White text
+    text_rect = text.get_rect()
+    text_rect.center = (screen.get_width() // 2, screen.get_height() // 2.5)
+    screen.blit(text, text_rect)
+    pygame.display.flip()
+
+
 def main(args):
     pygame.init()
 
@@ -46,6 +57,8 @@ def main(args):
 
     pygame.mouse.set_visible(False)
     pygame.display.set_caption('AI Photo Frame')
+
+    reneder_welcome_screen(screen)
 
     running = True
     while running:
