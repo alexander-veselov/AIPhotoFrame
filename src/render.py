@@ -43,22 +43,6 @@ class FadeRenderer:
             self.image2.set_alpha(int(self.alpha))
             self.screen.blit(self.image2, (0, 0))
 
-class CompositeRenderer:
-    def __init__(self):
-        self.queue = queue.Queue()
-        self.current_renderer = EmptyRenderer()
-    
-    def put(self, renderer):
-        self.queue.put(renderer)
-
-    def is_running(self):
-        return not self.queue.empty() or self.current_renderer.is_running()
-    
-    def render(self):
-        if not self.current_renderer.is_running() and not self.queue.empty():
-            self.current_renderer = self.queue.get()
-        self.current_renderer.render()
-
 class Renderer:
     RENDER_QUEUE_SIZE = 3
 
@@ -76,17 +60,16 @@ class Renderer:
         return self.queue.full()
 
     def put(self, image):
-        self.queue.put(image)
+        previous_image = self.image
+        self.image = image
+        if previous_image is not None:
+            self.queue.put(FadeRenderer(self.screen, self.fps, previous_image, self.image, self.fade_duration))
+        self.queue.put(StaticRenderer(self.screen, self.fps, self.image, self.frame_duration))
 
     def render(self): 
-        if not self.renderer.is_running():
-            current_image = self.image
+        if not self.renderer.is_running():  
             if not self.queue.empty():
-                self.image = self.queue.get()
-                self.renderer = CompositeRenderer()
-                if current_image is not None:
-                    self.renderer.put(FadeRenderer(self.screen, self.fps, current_image, self.image, self.fade_duration))
-                self.renderer.put(StaticRenderer(self.screen, self.fps, self.image, self.frame_duration))
+                self.renderer = self.queue.get()
         self.renderer.render()
         pygame.display.flip()
         self.clock.tick(self.fps)

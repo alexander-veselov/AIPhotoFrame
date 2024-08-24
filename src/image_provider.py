@@ -1,4 +1,5 @@
 import pygame
+import time
 
 class ImageProvider:
     def __init__(self, generator, prompt, negative_prompt, render_size, rotate, flip, put_callback, full_callback):
@@ -17,6 +18,7 @@ class ImageProvider:
         while self.running:
             if not self.full_callback():
                 self.put_callback(self.generate_image())
+            time.sleep(1)
 
     def stop(self):
         self.running = False
