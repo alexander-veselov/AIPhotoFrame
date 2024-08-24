@@ -18,7 +18,7 @@ class Application:
         self.image_generator = StableDiffusion(
             params.ip, params.port, self.render_size
         )
-        self.renderer = Renderer(self.screen, params.fps, params.frame_duration)
+        self.renderer = Renderer(self.screen, params.fps, params.frame_duration, params.fade_duration)
         self.image_provider = ImageProvider(
             self.image_generator, params.prompt, params.negative_prompt,
             self.render_size, params.rotate, params.flip,
