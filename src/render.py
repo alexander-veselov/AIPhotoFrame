@@ -1,5 +1,6 @@
 import queue
 import pygame
+from threading import Lock
 
 class EmptyRenderer:
     def render(self):
@@ -55,16 +56,18 @@ class Renderer:
         self.renderer = EmptyRenderer()
         self.clock = pygame.time.Clock()
         self.image = None
+        self.mutex = Lock()
 
     def full(self):
         return self.queue.full()
 
     def put(self, image):
-        previous_image = self.image
-        self.image = image
-        if previous_image is not None:
-            self.queue.put(FadeRenderer(self.screen, self.fps, previous_image, self.image, self.fade_duration))
-        self.queue.put(StaticRenderer(self.screen, self.fps, self.image, self.frame_duration))
+        with self.mutex:
+            previous_image = self.image
+            self.image = image
+            if previous_image is not None:
+                self.queue.put(FadeRenderer(self.screen, self.fps, previous_image, self.image, self.fade_duration))
+            self.queue.put(StaticRenderer(self.screen, self.fps, self.image, self.frame_duration))
 
     def render(self): 
         if not self.renderer.is_running():  

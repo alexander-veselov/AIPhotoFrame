@@ -29,7 +29,6 @@ class StableDiffusion:
             "cfg_scale": 7,
             "width": self.width,
             "height": self.height,
-            "hr_checkpoint_name": "hassakuXLHentai_v13",
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",
         }
