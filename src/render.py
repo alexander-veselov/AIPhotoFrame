@@ -2,6 +2,11 @@ import queue
 import pygame
 from threading import Lock
 
+from PIL import Image
+import RPi.GPIO as GPIO
+from spidev import SpiDev
+import ILI9486 as LCD
+
 class EmptyRenderer:
     def render(self):
         pass
@@ -58,6 +63,12 @@ class Renderer:
         self.image = None
         self.mutex = Lock()
 
+        # TODO: refactor
+        self.spi = SpiDev(0, 0)
+        self.spi.mode = 0b10
+        self.spi.max_speed_hz = 36000000
+        self.lcd = LCD.ILI9486(dc=24, rst=25, spi=self.spi)
+
     def full(self):
         return self.queue.full()
 
@@ -75,4 +86,15 @@ class Renderer:
                 self.renderer = self.queue.get()
         self.renderer.render()
         pygame.display.flip()
+        self.render_on_display()
         self.clock.tick(self.fps)
+
+    def render_on_display(self):
+        pixel_array = pygame.surfarray.array3d(self.screen)
+        image = Image.fromarray(pixel_array, 'RGB')
+        image = image.rotate(90, expand=True)
+        image = image.crop((0, 0, *self.screen.get_size()))
+        self.lcd.display(image)
+    
+    def reset(self):
+        self.lcd.reset()

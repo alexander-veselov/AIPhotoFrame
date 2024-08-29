@@ -34,6 +34,7 @@ class Application:
         while self.running:
             self.process_events(pygame.event.get())
             self.renderer.render()
+        self.renderer.reset()
         pygame.quit()
         return 0
     

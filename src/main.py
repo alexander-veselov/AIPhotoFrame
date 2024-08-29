@@ -21,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--fps', type=int, required=False, default=15, help="Display framerate")
     parser.add_argument('--frame_duration', type=int, required=False, default=60, help="Frame display duration in seconds")
     parser.add_argument('--fade_duration', type=int, required=False, default=15, help="Fade transition duration in seconds")
-    parser.add_argument('--windowed', action="store_false")
+    parser.add_argument('--windowed', action="store_true")
     parser.add_argument('--rotate', action="store_true")
     parser.add_argument('--flip', action="store_true")
     parser.add_argument('--width', required=False, default=480, type=int)

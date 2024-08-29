@@ -1,2 +1,6 @@
 pygame
 requests
+Pillow
+RPi.GPIO
+spidev
+rpi-lgpio
