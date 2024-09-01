@@ -12,8 +12,7 @@ class Application:
         self.rotate = params.rotate
         self.flip = params.flip
         self.size = (params.width, params.height)
-        self.surface = create_surface(params.display, self.size, params.windowed)
-        self.display = create_display(params.display, self.surface)
+        self.display = create_display(params.display, self.size, params.fullscreen)
         self.image_generator = create_generator(params.generator, params.ip, params.port)
         self.renderer = Renderer(self.display, params.fps, params.frame_duration, params.fade_duration)
         self.image_provider = ImageProvider(

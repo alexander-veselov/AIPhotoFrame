@@ -32,7 +32,7 @@ class StableDiffusion:
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",
         }
-
+        
         response = requests.post(self.url, json=params)
         if response.status_code != 200:
             print("response error: {0}".format(response.status_code))

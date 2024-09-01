@@ -30,8 +30,7 @@ class ILI9486Display:
     def flip(self):
         pixel_array = pygame.surfarray.array3d(self.surface)
         image = Image.fromarray(pixel_array, 'RGB')
-        image = image.rotate(90, expand=True)
-        image = image.crop((0, 0, *self.surface.get_size()))
+        image = image.crop((0, 0, *self.driver.get_size()))
         self.driver.display(image)
     
     def reset(self):
@@ -57,16 +56,17 @@ class CombinedDisplay:
         for display in self.displays:
             display.reset()
 
-def create_surface(display, size, windowed):
+def create_surface(display, size, fullscreen):
     if "pygame" in display:
         return pygame.display.set_mode(
             size,
-            pygame.DOUBLEBUF | (pygame.FULLSCREEN if windowed else 0)
+            pygame.DOUBLEBUF | (pygame.FULLSCREEN if fullscreen else 0)
         )
     else:
         return pygame.Surface(size)
 
-def create_display(display, surface):
+def create_display(display, size, fullscreen):
+    surface = create_surface(display, size, fullscreen)
     combined_display = CombinedDisplay()
     for display_name in display.split('+'):
         try:
