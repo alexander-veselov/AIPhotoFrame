@@ -66,7 +66,7 @@ class Renderer:
         # TODO: refactor
         self.spi = SpiDev(0, 0)
         self.spi.mode = 0b10
-        self.spi.max_speed_hz = 36000000
+        self.spi.max_speed_hz = 48000000
         self.lcd = LCD.ILI9486(dc=24, rst=25, spi=self.spi)
 
     def full(self):
