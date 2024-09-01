@@ -2,10 +2,10 @@ import pygame
 import time
 
 class ImageProvider:
-    def __init__(self, generator, prompt, negative_prompt, render_size, rotate, flip, put_callback, full_callback):
+    def __init__(self, generator, prompt, negative_prompt, size, rotate, flip, put_callback, full_callback):
         self.prompt = prompt
         self.negative_prompt = negative_prompt
-        self.render_size = render_size
+        self.render_size = (size[1], size[0]) if rotate else size
         self.rotate = rotate
         self.flip = flip
         self.generator = generator
@@ -33,5 +33,5 @@ class ImageProvider:
         return image
 
     def generate_image(self):
-        image_data = self.generator.generate(self.prompt, self.negative_prompt)
+        image_data = self.generator.generate(self.render_size, self.prompt, self.negative_prompt)
         return self.create_image(image_data)

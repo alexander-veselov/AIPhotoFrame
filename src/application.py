@@ -3,6 +3,7 @@ import threading
 from render import Renderer
 from image_provider import ImageProvider
 from stable_diffusion import StableDiffusion
+from display.display import create_surface, create_display
 
 class Application:
     def __init__(self, params):
@@ -10,18 +11,14 @@ class Application:
         self.running = False
         self.rotate = params.rotate
         self.flip = params.flip
-        self.render_size = (params.height, params.width) if params.rotate else (params.width, params.height)
-        self.screen = pygame.display.set_mode(
-            (params.width, params.height),
-            pygame.DOUBLEBUF | (pygame.FULLSCREEN if params.windowed else 0)
-        )
-        self.image_generator = StableDiffusion(
-            params.ip, params.port, self.render_size
-        )
-        self.renderer = Renderer(self.screen, params.fps, params.frame_duration, params.fade_duration)
+        self.size = (params.width, params.height)
+        self.surface = create_surface(params.display, self.size, params.windowed)
+        self.display = create_display(params.display, self.surface)
+        self.image_generator = StableDiffusion(params.ip, params.port)
+        self.renderer = Renderer(self.display, params.fps, params.frame_duration, params.fade_duration)
         self.image_provider = ImageProvider(
             self.image_generator, params.prompt, params.negative_prompt,
-            self.render_size, params.rotate, params.flip,
+            self.size, params.rotate, params.flip,
             self.renderer.put, self.renderer.full
         )
         self.image_provider_thread = threading.Thread(target=self.image_provider.run, daemon=True)
