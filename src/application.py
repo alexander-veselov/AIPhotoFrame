@@ -2,7 +2,7 @@ import pygame
 import threading
 from render import Renderer
 from image_provider import ImageProvider
-from stable_diffusion import StableDiffusion
+from generators.generator import create_generator
 from display.display import create_surface, create_display
 
 class Application:
@@ -14,7 +14,7 @@ class Application:
         self.size = (params.width, params.height)
         self.surface = create_surface(params.display, self.size, params.windowed)
         self.display = create_display(params.display, self.surface)
-        self.image_generator = StableDiffusion(params.ip, params.port)
+        self.image_generator = create_generator(params.generator, params.ip, params.port)
         self.renderer = Renderer(self.display, params.fps, params.frame_duration, params.fade_duration)
         self.image_provider = ImageProvider(
             self.image_generator, params.prompt, params.negative_prompt,
