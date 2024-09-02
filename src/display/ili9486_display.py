@@ -15,8 +15,8 @@ class ILI9486Display:
         return self.surface
 
     def flip(self):
-        pixel_array = pygame.surfarray.array3d(self.surface)
-        image = Image.fromarray(pixel_array.swapaxes(0, 1), 'RGB')
+        pixel_data = pygame.image.tostring(self.surface, 'RGB')
+        image = Image.frombytes('RGB', self.surface.get_size(), pixel_data)
         image = image.crop((0, 0, *self.driver.get_size()))
         self.driver.display(image)
     
