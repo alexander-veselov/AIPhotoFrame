@@ -27,7 +27,7 @@ class ImageProvider:
         image = pygame.image.load(image_data)
         image = pygame.transform.smoothscale(image, self.render_size)
         if self.rotate:
-            image = pygame.transform.rotate(image, 90)
+            image = pygame.transform.rotate(image, -90)
         if self.flip:
             image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
         return image

@@ -1,6 +1,3 @@
 pygame
 requests
-Pillow
-RPi.GPIO
-spidev
-rpi-lgpio
+ili9486 @ git+https://github.com/alexander-veselov/ILI9486
