@@ -1,28 +1,13 @@
 import pygame
 import threading
-from render import Renderer
-from image_provider import ImageProvider
-from generators.generator import create_generator
-from display.display import create_display
 
 class Application:
-    def __init__(self, params):
+    def __init__(self, renderer, image_provider):
         pygame.init()
-        self.running = False
-        self.rotate = params.rotate
-        self.flip = params.flip
-        self.size = (params.width, params.height)
-        self.display = create_display(params.display, self.size, params.fullscreen)
-        self.image_generator = create_generator(params.generator, params.ip, params.port)
-        self.renderer = Renderer(self.display, params.fps, params.frame_duration, params.fade_duration)
-        self.image_provider = ImageProvider(
-            self.image_generator, params.prompt, params.negative_prompt,
-            self.size, params.rotate, params.flip,
-            self.renderer.put, self.renderer.full
-        )
-        self.image_provider_thread = threading.Thread(target=self.image_provider.run, daemon=True)
-        pygame.mouse.set_visible(False)
         pygame.display.set_caption('AI Photo Frame')
+        pygame.mouse.set_visible(False)
+        self.renderer = renderer
+        self.image_provider_thread = threading.Thread(target=image_provider.run, daemon=True)
 
     def run(self):
         self.running = True

@@ -4,8 +4,8 @@ from spidev import SpiDev
 from ili9486.ili9486 import ILI9486
 
 class ILI9486Display:
-    def __init__(self, surface):
-        self.surface = surface
+    def __init__(self, width, height):
+        self.surface = pygame.Surface((width, height))
         self.spi = SpiDev(0, 0)
         self.spi.mode = 0b10
         self.spi.max_speed_hz = 48000000
