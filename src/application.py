@@ -21,5 +21,7 @@ class Application:
     
     def process_events(self, events):
         for event in events:
-            if event.type == pygame.QUIT or event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.QUIT or \
+               event.type == pygame.MOUSEBUTTONDOWN or \
+               event.type == pygame.KEYDOWN:
                 self.running = False
