@@ -1,6 +1,4 @@
 import pygame
-from display.ili9486_display import ILI9486Display
-from display.pygame_display import PygameDisplay
 
 class Display:
     def __init__(self):
@@ -37,12 +35,13 @@ def create_display(display_info, size, fullscreen):
     for display_name in display_info.split('+'):
         try:
             if display_name == "ili9486":
+                from display.ili9486_display import ILI9486Display
                 display.append(ILI9486Display(surface))
             elif display_name == "pygame":
+                from display.pygame_display import PygameDisplay
                 display.append(PygameDisplay(surface))
             else:
                 raise Exception("Unsupported display type")
         except Exception as e:
-            print('Failed to create "{0}" display'.format(display_name))
-            print(e)
+            print(f'Failed to create "{display_name}" display: {e}')
     return display

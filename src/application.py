@@ -3,7 +3,7 @@ import threading
 from render import Renderer
 from image_provider import ImageProvider
 from generators.generator import create_generator
-from display.display import create_surface, create_display
+from display.display import create_display
 
 class Application:
     def __init__(self, params):
