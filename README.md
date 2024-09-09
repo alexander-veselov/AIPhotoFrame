@@ -95,9 +95,9 @@ endlocal
 Note: In real life, the display has nice, rich colors without any artifacts. Artifacts present in photographs are camera distortions.
 
 <p align="center">
-    <img width="49%" src="https://github.com/user-attachments/assets/136eb35a-bfaf-41a0-8862-b7a0bfa74b49"/>
+    <img width="49%" src="https://github.com/user-attachments/assets/1b668564-db97-49ea-bce1-857dd7d07d60"/>
 &nbsp;
-    <img width="49%" src="https://github.com/user-attachments/assets/4ae8bff5-11cf-41fe-9e69-8f16b0a283ca"/>
+    <img width="49%" src="https://github.com/user-attachments/assets/136eb35a-bfaf-41a0-8862-b7a0bfa74b49"/>
 </p>
 
 <p align="center">
