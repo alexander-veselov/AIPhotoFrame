@@ -29,7 +29,30 @@ pip3 install -r requirements_ili9486.txt
 In case if you are using ILI9486 and Raspberry Pi everything should work out of the box, but make sure that [SPI is enabled](https://github.com/alexander-veselov/ILI9486?tab=readme-ov-file#install).
 
 # Stable Diffusion (AUTOMATIC1111) setup
-- TBD
+Since Raspberry Pi is not capable enough for generating AI images using large generative models, a separate server is required.
+[AUTOMATIC1111](https://github.com/AUTOMATIC1111/stable-diffusion-webui) can be used for such purposes.
+Follow [Installation and Running](https://github.com/AUTOMATIC1111/stable-diffusion-webui?tab=readme-ov-file#installation-and-running) instructions.
+
+To run AUTOMATIC1111 as a server that can be accessed using Raspberry Pi you need to run the ```webui-user.sh/bat``` with following parameters: ```--nowebui --api```. Windows example:
+```batch
+@echo off
+
+set PYTHON=
+set GIT=
+set VENV_DIR=
+set COMMANDLINE_ARGS=--nowebui --api
+
+call webui.bat
+```
+
+After running server you will see server IP and port. E.g ```http://0.0.0.0:7861```.
+To get public IP you can run ```ipconfig``` (on Windows) or ```ifconfig``` (on Linux).
+
+#### Windows Firewall
+
+Server still can be inaccessible from Raspberry Pi. If your server is running on Windows, check Windows Firewall settings.
+
+As first step you can disable Firewall at all and check if it helps. If it helps and you still want to have Firewall enabled, you need to make a special rule for the port that server is using. Also double-check that there are no conflicting rules that are restricting connection. There may be a situation that Python has a rule to restrict all incoming connections. In such a case you need to disable or modify this rule.
 
 # Usage
 ```bash
