@@ -1,7 +1,9 @@
 # AIPhotoFrame
 [![last-commit](https://img.shields.io/github/last-commit/alexander-veselov/AIPhotoFrame)](https://github.com/alexander-veselov/AIPhotoFrame/commits/main/)
 
-Display AI generated images in photo frame. 
+Display AI generated images in photo frame.
+
+<img width="49%" src="https://github.com/user-attachments/assets/d1741d2f-e302-4ad7-934c-58aa75d427b1"/>
 
 # Install
 ```bash
@@ -92,7 +94,20 @@ endlocal
 # Photos
 Note: In real life, the display has nice, rich colors without any artifacts. Artifacts present in photographs are camera distortions.
 
-(More images TBD)
 <p align="center">
-    <img width="49%" src="https://github.com/user-attachments/assets/acfdada0-0c4c-4822-b97e-689a1e80440c"/>
+    <img width="49%" src="https://github.com/user-attachments/assets/136eb35a-bfaf-41a0-8862-b7a0bfa74b49"/>
+&nbsp;
+    <img width="49%" src="https://github.com/user-attachments/assets/4ae8bff5-11cf-41fe-9e69-8f16b0a283ca"/>
+</p>
+
+<p align="center">
+    <img width="49%" src="https://github.com/user-attachments/assets/4ae8bff5-11cf-41fe-9e69-8f16b0a283ca"/>
+&nbsp;
+    <img width="49%" src="https://github.com/user-attachments/assets/fbd3e379-6b68-474c-be10-a19f05d94e9a"/>
+</p>
+
+<p align="center">
+    <img width="49%" src="https://github.com/user-attachments/assets/6ac2162a-0fc4-42d0-b136-469e82aae32e"/>
+&nbsp;
+    <img width="49%" src="https://github.com/user-attachments/assets/5d03eb77-1889-4fa1-b94a-791016fcf514"/>
 </p>
