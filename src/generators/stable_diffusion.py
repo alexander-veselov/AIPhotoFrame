@@ -2,15 +2,16 @@ import requests
 import base64
 from io import BytesIO
 
-def calculate_generate_size(screen_size, target_longest_size = 1024):
+def calculate_generate_size(screen_size, minimum_longest_size = 1024):
+    minimum_longest_size = max(minimum_longest_size, max(screen_size))
     screen_width, screen_height = screen_size
     horizontal = screen_width > screen_height
     if horizontal:
-        ratio = target_longest_size // screen_width
-        return (target_longest_size, screen_height * ratio)
+        ratio = minimum_longest_size // screen_width
+        return (minimum_longest_size, screen_height * ratio)
     else:
-        ratio = target_longest_size // screen_height
-        return (screen_width * ratio, target_longest_size)
+        ratio = minimum_longest_size // screen_height
+        return (screen_width * ratio, minimum_longest_size)
     
 class StableDiffusion:
     DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
