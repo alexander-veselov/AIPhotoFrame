@@ -17,8 +17,10 @@ class StableDiffusion:
     DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
     DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
 
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, highres_scale=2):
         self.url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
+        # TODO: make highres_scale as program input parameter
+        self.highres_scale = highres_scale
 
     def generate(self, size, prompt, negative_prompt=""):
         width, height = calculate_generate_size(size)
@@ -28,12 +30,20 @@ class StableDiffusion:
             "seed": -1,
             "steps": 20,
             "cfg_scale": 7,
-            "width": width,
-            "height": height,
+            "width": width // self.highres_scale,
+            "height": height // self.highres_scale,
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",
         }
         
+        if self.highres_scale > 1:
+            params.update({
+                "enable_hr": True,
+                "hr_scale": self.highres_scale,
+                "hr_upscaler": "Latent",
+                "denoising_strength": 0.7
+            })
+
         response = requests.post(self.url, json=params)
         if response.status_code != 200:
             print("response error: {0}".format(response.status_code))
