@@ -56,8 +56,8 @@ def override_generator(container, generator):
         )
 
 def override_display(container, display):
-    if display == 'ili9486':
-        try:
+    try:
+        if display == 'ili9486':
             from display.ili9486_display import ILI9486Display
             container.override_providers(
                 display=providers.Singleton(
@@ -66,5 +66,14 @@ def override_display(container, display):
                     height=container.config.height,
                 )
             )
-        except Exception as e:
-            print(f'Failed to import ILI9486Display: {e}')
+        if display == 'inky':
+            from display.inky_display import InkyDisplay
+            container.override_providers(
+                display=providers.Singleton(
+                    InkyDisplay,
+                    width=container.config.width,
+                    height=container.config.height,
+                )
+            )
+    except Exception as e:
+        print(f'Failed to import {display} display: {e}')
