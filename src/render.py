@@ -80,3 +80,6 @@ class Renderer:
     
     def reset(self):
         self.display.reset()
+
+    def get_image(self):
+        return self.image

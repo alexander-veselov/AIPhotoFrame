@@ -1,7 +1,7 @@
 import pygame
-from PIL import Image
 from spidev import SpiDev
 from ili9486.ili9486 import ILI9486
+from utils import surface_to_image
 
 class ILI9486Display:
     def __init__(self, width, height):
@@ -15,8 +15,7 @@ class ILI9486Display:
         return self.surface
 
     def flip(self):
-        pixel_data = pygame.image.tostring(self.surface, 'RGB')
-        image = Image.frombytes('RGB', self.surface.get_size(), pixel_data)
+        image = surface_to_image(self.surface)
         image = image.crop((0, 0, *self.driver.get_size()))
         self.driver.display(image)
     

@@ -1,5 +1,6 @@
 import pygame
 import threading
+from utils import save_image
 
 class Application:
     def __init__(self, renderer, image_provider):
@@ -7,6 +8,7 @@ class Application:
         pygame.display.set_caption('AI Photo Frame')
         pygame.mouse.set_visible(False)
         self.renderer = renderer
+        self.image_provider = image_provider
         self.image_provider_thread = threading.Thread(target=image_provider.run, daemon=True)
 
     def run(self):
@@ -18,10 +20,17 @@ class Application:
         self.renderer.reset()
         pygame.quit()
         return 0
-    
+
     def process_events(self, events):
         for event in events:
-            if event.type == pygame.QUIT or \
-               event.type == pygame.MOUSEBUTTONDOWN or \
-               event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.KEYDOWN:
+                self.process_key_event(event)
+
+    def process_key_event(self, event):
+        if event.key == pygame.K_a:
+            image = self.renderer.get_image()
+            if image is not None:
+                image = self.image_provider.reverse_transform(image)
+                save_image(image)
