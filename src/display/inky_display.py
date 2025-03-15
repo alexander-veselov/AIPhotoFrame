@@ -39,10 +39,12 @@ class EventHandler:
         self.request = self.chip.request_lines(consumer='inky7-buttons', config=self.line_config)
 
     def process(self):
-        for event in self.request.read_edge_events():
-            index = self.offsets.index(event.line_offset)
-            button = self.buttons[index]
-            post_pygame_key_event(button)
+        timeout = 0.1
+        if self.request.wait_edge_events(timeout):
+            for event in self.request.read_edge_events():
+                index = self.offsets.index(event.line_offset)
+                button = self.buttons[index]
+                post_pygame_key_event(button)
 
 class InkyDisplay:
     def __init__(self, width, height):
