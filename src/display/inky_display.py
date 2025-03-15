@@ -54,10 +54,6 @@ class InkyDisplay:
     def get_surface(self):
         return self.surface
 
-    def show_image(self, image):
-        self.display.set_image(image)
-        self.display.show()
-
     def flip(self):
         image = surface_to_image(self.surface)
         image = image.crop((0, 0, *self.display.resolution))
@@ -66,7 +62,8 @@ class InkyDisplay:
         diff = ImageChops.difference(self.last_image, image)
         if diff.getbbox():
             self.last_image = image
-            self.show_image(image)
+            self.display.set_image(image)
+            self.display.show()
         self.event_handler.process() # TODO: refactor
     
     def reset(self):
