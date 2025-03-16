@@ -54,22 +54,26 @@ class EventHandler:
                     post_pygame_key_event(button)
 
 class InkyDisplay:
-    def __init__(self, width, height):
+    def __init__(self, width, height, skip_first_frame=False):
         self.surface = pygame.Surface((width, height))
         self.display = auto()
         self.image_observer = ImageObserver()
         self.event_handler = EventHandler()
+        self.skip_first_frame = skip_first_frame
 
     def get_surface(self):
         return self.surface
 
     def flip(self):
+        self.event_handler.process() # TODO: refactor
         image = surface_to_image(self.surface)
         image = image.crop((0, 0, *self.display.resolution))
-        if self.image_observer.updated(image):
+        if self.image_observer.update(image):
+            if self.skip_first_frame:
+                self.skip_first_frame = False
+                return
             self.display.set_image(image)
             self.display.show()
-        self.event_handler.process() # TODO: refactor
     
     def reset(self):
         pass # TODO: implement if needed

@@ -73,6 +73,7 @@ def override_display(container, display):
                     InkyDisplay,
                     width=container.config.width,
                     height=container.config.height,
+                    skip_first_frame=True
                 )
             )
     except Exception as e:

@@ -4,7 +4,7 @@ class ImageObserver:
     def __init__(self):
         self.image = None
     
-    def updated(self, image):
+    def update(self, image):
         if self.image is None:
             self.image = image
             return True

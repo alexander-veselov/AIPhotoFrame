@@ -8,7 +8,7 @@ class ImageSaver:
     
     def save_image(self, image):
         if image is not None:
-            if self.image_observer.updated(surface_to_image(image)):
+            if self.image_observer.update(surface_to_image(image)):
                 transformed_image = self.transform(image)
                 image_path = save_image(transformed_image)
                 print(f'Image saved to {image_path}')
