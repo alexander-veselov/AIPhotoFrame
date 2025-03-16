@@ -1,4 +1,5 @@
 import pygame
+import time
 import gpiod
 import gpiodevice
 from enum import IntEnum
@@ -37,6 +38,8 @@ class EventHandler:
         self.input = gpiod.LineSettings(direction=Direction.INPUT, bias=Bias.PULL_UP, edge_detection=Edge.FALLING)
         self.line_config = dict.fromkeys(self.offsets, self.input)
         self.request = self.chip.request_lines(consumer='inky7-buttons', config=self.line_config)
+        self.last_pressed = {button: 0 for button in self.buttons}
+        self.debounce_delay = 0.2
 
     def process(self):
         timeout = 0.1
@@ -44,7 +47,10 @@ class EventHandler:
             for event in self.request.read_edge_events():
                 index = self.offsets.index(event.line_offset)
                 button = self.buttons[index]
-                post_pygame_key_event(button)
+                current_time = time.time()
+                if current_time - self.last_pressed[button] >= self.debounce_delay:
+                    self.last_pressed[button] = current_time
+                    post_pygame_key_event(button)
 
 class InkyDisplay:
     def __init__(self, width, height):
