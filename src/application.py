@@ -1,6 +1,6 @@
 import pygame
 import threading
-from utils import save_image
+from image_saver import ImageSaver
 
 class Application:
     def __init__(self, renderer, image_provider):
@@ -10,6 +10,7 @@ class Application:
         self.renderer = renderer
         self.image_provider = image_provider
         self.image_provider_thread = threading.Thread(target=image_provider.run, daemon=True)
+        self.image_saver = ImageSaver(transform=self.image_provider.reverse_transform)
 
     def run(self):
         self.running = True
@@ -31,6 +32,4 @@ class Application:
     def process_key_event(self, event):
         if event.key == pygame.K_a:
             image = self.renderer.get_image()
-            if image is not None:
-                image = self.image_provider.reverse_transform(image)
-                save_image(image)
+            self.image_saver.save_image(image)

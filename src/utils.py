@@ -1,6 +1,6 @@
 import os
 import pygame
-from PIL import Image
+from PIL import Image, ImageChops
 from datetime import datetime
 
 def surface_to_image(surface: pygame.Surface):
@@ -16,3 +16,7 @@ def save_image(surface: pygame.Surface):
     file_path = os.path.join(save_dir, filename)
     image.save(file_path)
     return file_path
+
+def equal_images(image1, image2):
+    diff = ImageChops.difference(image1, image2)
+    return not bool(diff.getbbox())

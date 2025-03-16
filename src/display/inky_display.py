@@ -3,8 +3,8 @@ import time
 import gpiod
 import gpiodevice
 from enum import IntEnum
-from PIL import ImageChops
 from utils import surface_to_image
+from image_observer import ImageObserver
 from inky.auto import auto
 from gpiod.line import Bias, Direction, Edge
 
@@ -31,6 +31,9 @@ def post_pygame_key_event(button):
     pygame.event.post(key_event)
 
 class EventHandler:
+    DEBOUNCE_DELAY = 0.2
+    AWAIT_EVENT_TIMEOUT = 0.1
+
     def __init__(self):
         self.buttons = [Buttons.A, Buttons.B, Buttons.C, Buttons.D]
         self.chip = gpiodevice.find_chip_by_platform()
@@ -39,16 +42,14 @@ class EventHandler:
         self.line_config = dict.fromkeys(self.offsets, self.input)
         self.request = self.chip.request_lines(consumer='inky7-buttons', config=self.line_config)
         self.last_pressed = {button: 0 for button in self.buttons}
-        self.debounce_delay = 0.2
 
     def process(self):
-        timeout = 0.1
-        if self.request.wait_edge_events(timeout):
+        if self.request.wait_edge_events(EventHandler.AWAIT_EVENT_TIMEOUT):
             for event in self.request.read_edge_events():
                 index = self.offsets.index(event.line_offset)
                 button = self.buttons[index]
                 current_time = time.time()
-                if current_time - self.last_pressed[button] >= self.debounce_delay:
+                if current_time - self.last_pressed[button] >= EventHandler.DEBOUNCE_DELAY:
                     self.last_pressed[button] = current_time
                     post_pygame_key_event(button)
 
@@ -56,7 +57,7 @@ class InkyDisplay:
     def __init__(self, width, height):
         self.surface = pygame.Surface((width, height))
         self.display = auto()
-        self.last_image = None
+        self.image_observer = ImageObserver()
         self.event_handler = EventHandler()
 
     def get_surface(self):
@@ -65,11 +66,7 @@ class InkyDisplay:
     def flip(self):
         image = surface_to_image(self.surface)
         image = image.crop((0, 0, *self.display.resolution))
-        if self.last_image is None:
-            self.last_image = image
-        diff = ImageChops.difference(self.last_image, image)
-        if diff.getbbox():
-            self.last_image = image
+        if self.image_observer.updated(image):
             self.display.set_image(image)
             self.display.show()
         self.event_handler.process() # TODO: refactor
