@@ -1,26 +1,15 @@
 import requests
 import base64
 from io import BytesIO
-
-def calculate_generate_size(screen_size, minimum_longest_size = 1200):
-    minimum_longest_size = max(minimum_longest_size, max(screen_size))
-    screen_width, screen_height = screen_size
-    horizontal = screen_width > screen_height
-    if horizontal:
-        ratio = minimum_longest_size / screen_width
-        return (minimum_longest_size, round(screen_height * ratio))
-    else:
-        ratio = minimum_longest_size / screen_height
-        return (round(screen_width * ratio), minimum_longest_size)
+from utils import calculate_generate_size
     
 class StableDiffusion:
     DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
     DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
+    HIGHRES_SCALE = 2
 
-    def __init__(self, ip, port, highres_scale=2):
+    def __init__(self, ip, port):
         self.url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
-        # TODO: make highres_scale as program input parameter
-        self.highres_scale = highres_scale
 
     def generate(self, size, prompt, negative_prompt=""):
         width, height = calculate_generate_size(size)
@@ -30,16 +19,16 @@ class StableDiffusion:
             "seed": -1,
             "steps": 20,
             "cfg_scale": 7,
-            "width": width // self.highres_scale,
-            "height": height // self.highres_scale,
+            "width": width // StableDiffusion.HIGHRES_SCALE,
+            "height": height // StableDiffusion.HIGHRES_SCALE,
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",
         }
         
-        if self.highres_scale > 1:
+        if StableDiffusion.HIGHRES_SCALE > 1:
             params.update({
                 "enable_hr": True,
-                "hr_scale": self.highres_scale,
+                "hr_scale": StableDiffusion.HIGHRES_SCALE,
                 "hr_upscaler": "Latent",
                 "denoising_strength": 0.7
             })

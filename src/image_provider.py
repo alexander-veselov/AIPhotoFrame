@@ -2,13 +2,14 @@ import pygame
 import time
 
 class ImageProvider:
-    def __init__(self, generator, renderer, prompt, negative_prompt, width, height, rotate, flip):
+    def __init__(self, image_generator, prompt_generator, renderer, prompt, negative_prompt, width, height, rotate, flip):
         self.prompt = prompt
         self.negative_prompt = negative_prompt
         self.render_size = (height, width) if rotate else (width, height)
         self.rotate = rotate
         self.flip = flip
-        self.generator = generator
+        self.image_generator = image_generator
+        self.prompt_generator = prompt_generator
         self.renderer = renderer
         self.running = False
 
@@ -28,7 +29,11 @@ class ImageProvider:
         return self.transform(image)
 
     def generate_image(self):
-        image_data = self.generator.generate(self.render_size, self.prompt, self.negative_prompt)
+        prompt = self.prompt
+        if self.prompt_generator is not None:
+            prompt = self.prompt_generator.generate(self.render_size, prompt)
+            print(f'Generated prompt: {prompt}')
+        image_data = self.image_generator.generate(self.render_size, prompt, self.negative_prompt)
         return self.create_image(image_data)
 
     def transform(self, image):

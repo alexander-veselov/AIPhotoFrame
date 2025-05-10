@@ -3,6 +3,7 @@ from dependency_injector import containers, providers
 from application import Application
 from generators.mock_generator import MockGenerator
 from generators.stable_diffusion import StableDiffusion
+from generators.prompt_generator import PromptGenerator
 from display.pygame_display import PygameDisplay
 from image_provider import ImageProvider
 from render import Renderer
@@ -31,9 +32,12 @@ class Container(containers.DeclarativeContainer):
         port=config.port
     )
 
+    prompt_generator = providers.Object(None)
+
     image_provider = providers.Singleton(
         ImageProvider,
-        generator=image_generator,
+        image_generator=image_generator,
+        prompt_generator=prompt_generator,
         renderer=renderer,
         prompt=config.prompt,
         negative_prompt=config.negative_prompt,
@@ -49,8 +53,8 @@ class Container(containers.DeclarativeContainer):
         image_provider=image_provider
     )
 
-def override_generator(container, generator):
-    if generator == 'mock_generator':
+def override_image_generator(container, image_generator):
+    if image_generator == 'mock_generator':
         container.override_providers(
             image_generator=providers.Singleton(MockGenerator)
         )
@@ -78,3 +82,12 @@ def override_display(container, display):
             )
     except Exception as e:
         print(f'Failed to import {display} display: {e}')
+
+def setup_prompt_generator(container):
+    container.override_providers(
+        prompt_generator=providers.Singleton(
+            PromptGenerator,
+            ip=container.config.ip,
+            port=container.config.port
+        )
+    )
