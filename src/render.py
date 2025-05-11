@@ -1,6 +1,7 @@
 import queue
 import pygame
 from threading import Lock
+from generated_image import GeneratedImage
 
 class EmptyRenderer:
     def render(self):
@@ -8,6 +9,9 @@ class EmptyRenderer:
 
     def is_running(self):
         return False
+    
+    def get_image(self):
+        return None
 
 class StaticRenderer:
     def __init__(self, surface, fps, image, duration):
@@ -22,6 +26,9 @@ class StaticRenderer:
     def render(self):
         self.frame += 1
         self.surface.blit(self.image, (0, 0))
+    
+    def get_image(self):
+        return self.image
 
 class FadeRenderer:
     MAX_TRANSPARENCY = 255
@@ -43,6 +50,9 @@ class FadeRenderer:
             self.surface.blit(self.image1, (0, 0))
             self.image2.set_alpha(int(self.alpha))
             self.surface.blit(self.image2, (0, 0))
+    
+    def get_image(self):
+        return self.image1
 
 class Renderer:
     RENDER_QUEUE_SIZE = 3
@@ -61,7 +71,7 @@ class Renderer:
     def full(self):
         return self.queue.full()
 
-    def put(self, image):
+    def put(self, image: GeneratedImage):
         with self.mutex:
             previous_image = self.image
             self.image = image
@@ -82,4 +92,4 @@ class Renderer:
         self.display.reset()
 
     def get_image(self):
-        return self.display.get_surface()
+        return self.renderer.get_image()

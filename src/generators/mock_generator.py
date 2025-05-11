@@ -11,4 +11,4 @@ class MockGenerator:
 
     def generate(self, size, prompt, negative_prompt=""):
         self.image_index = (self.image_index + 1) % len(self.images)
-        return BytesIO(self.images[self.image_index])
+        return BytesIO(self.images[self.image_index]), ""

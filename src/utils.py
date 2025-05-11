@@ -1,20 +1,22 @@
 import os
 import pygame
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, PngImagePlugin
 from datetime import datetime
 
 def surface_to_image(surface: pygame.Surface):
     pixel_data = pygame.image.tostring(surface, 'RGB')
     return Image.frombytes('RGB', surface.get_size(), pixel_data)
 
-def save_image(surface: pygame.Surface):
+def save_image(surface: pygame.Surface, generation_info=""):
     image = surface_to_image(surface)
     save_dir = os.path.join(os.path.expanduser("~"), "Pictures/AIPhotoFrame")
     os.makedirs(save_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"image_{timestamp}.png"
     file_path = os.path.join(save_dir, filename)
-    image.save(file_path)
+    meta = PngImagePlugin.PngInfo()
+    meta.add_text("parameters", generation_info)
+    image.save(file_path, pnginfo=meta)
     return file_path
 
 def equal_images(image1, image2):

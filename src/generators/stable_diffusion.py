@@ -9,9 +9,10 @@ class StableDiffusion:
     HIGHRES_SCALE = 2
 
     def __init__(self, ip, port):
-        self.url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
+        self.txt2img_url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
+        self.png_info_url = 'http://{0}:{1}/sdapi/v1/png-info'.format(ip, port)
 
-    def generate(self, size, prompt, negative_prompt=""):
+    def post_txt2img(self, size, prompt, negative_prompt):
         width, height = calculate_generate_size(size)
         params = {
             "prompt": StableDiffusion.DEFAULT_PROMPT + prompt,
@@ -32,12 +33,26 @@ class StableDiffusion:
                 "hr_upscaler": "Latent",
                 "denoising_strength": 0.7
             })
+        
+        return requests.post(self.txt2img_url, json=params)
 
-        response = requests.post(self.url, json=params)
-        if response.status_code != 200:
-            print("response error: {0}".format(response.status_code))
+    def post_png_info(self, image_data):
+        image_base64 = base64.b64encode(image_data).decode("utf-8")
+        return requests.post(self.png_info_url, json={"image": image_base64})
+
+    def generate(self, size, prompt, negative_prompt=""):
+        txt2img_response = self.post_txt2img(size, prompt, negative_prompt)
+        if txt2img_response.status_code != 200:
+            print("txt2img response error: {0}".format(txt2img_response.status_code))
             return None
 
-        response_json = response.json()
-        image_data = base64.b64decode(response_json["images"][0])
-        return BytesIO(image_data)
+        image_data = base64.b64decode(txt2img_response.json()["images"][0])
+    
+        generation_info = ""
+        png_info_response = self.post_png_info(image_data)
+        if png_info_response.status_code == 200:
+            generation_info = png_info_response.json()["info"]
+        else:
+            print("png_info response error: {0}".format(png_info_response.status_code))
+
+        return BytesIO(image_data), generation_info

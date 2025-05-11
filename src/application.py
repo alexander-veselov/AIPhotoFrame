@@ -30,6 +30,6 @@ class Application:
                 self.process_key_event(event)
 
     def process_key_event(self, event):
-        if event.key == pygame.K_a:
+        if event.key == pygame.K_a or event.key == pygame.K_PRINTSCREEN:
             image = self.renderer.get_image()
             self.image_saver.save_image(image)
