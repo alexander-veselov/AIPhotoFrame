@@ -32,7 +32,11 @@ class Container(containers.DeclarativeContainer):
         port=config.port
     )
 
-    prompt_generator = providers.Object(None)
+    prompt_generator=providers.Singleton(
+        PromptGenerator,
+        ip=config.ip,
+        port=config.port
+    )
 
     image_provider = providers.Singleton(
         ImageProvider,
@@ -44,7 +48,8 @@ class Container(containers.DeclarativeContainer):
         width=config.width,
         height=config.height,
         rotate=config.rotate,
-        flip=config.flip
+        flip=config.flip,
+        improve_prompt=config.improve_prompt
     )
 
     application = providers.Singleton(
@@ -82,12 +87,3 @@ def override_display(container, display):
             )
     except Exception as e:
         print(f'Failed to import {display} display: {e}')
-
-def setup_prompt_generator(container):
-    container.override_providers(
-        prompt_generator=providers.Singleton(
-            PromptGenerator,
-            ip=container.config.ip,
-            port=container.config.port
-        )
-    )

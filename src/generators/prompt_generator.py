@@ -5,7 +5,16 @@ class PromptGenerator:
     def __init__(self, ip, port):
         self.url = 'http://{0}:{1}/z-tipo/generate-prompt'.format(ip, port)
 
-    def generate(self, size, prompt):
+    def process(self, size, prompt, negative_prompt, improve_prompt):
+        DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
+        DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
+        prompt = DEFAULT_PROMPT + prompt
+        negative_prompt = DEFAULT_NEGATIVE_PROMPT + negative_prompt
+        if improve_prompt:
+            prompt = self._generate(size, prompt)
+        return prompt, negative_prompt
+
+    def _generate(self, size, prompt):
         width, height = calculate_generate_size(size)
         params = {
             "prompt": prompt,
@@ -14,7 +23,8 @@ class PromptGenerator:
             "top_p": 0.95,
             "top_k": 100,
             "tag_length": "long",
-            "ban_tags": "chibi, background"
+            "ban_tags": "chibi, background, border",
+            "format_select": "tag only (DTG mode)"
         }
 
         response = requests.post(self.url, json=params)
@@ -23,13 +33,4 @@ class PromptGenerator:
             return None
 
         response_json = response.json()
-        result = response_json["result"]
-        prompt_parts = [part for part in result.split('\n') if part.strip()]
-
-        # TODO: Improve API to support "tag only (DTG mode)"
-        if len(prompt_parts) != 3:
-            print(f'Unexpected number of prompt lines: {len(prompt_parts)}')
-            return result
-        
-        special_tags, tags, natural_language = prompt_parts
-        return special_tags + tags
+        return response_json["result"]

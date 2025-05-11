@@ -3,7 +3,7 @@ import time
 from generated_image import GeneratedImage
 
 class ImageProvider:
-    def __init__(self, image_generator, prompt_generator, renderer, prompt, negative_prompt, width, height, rotate, flip):
+    def __init__(self, image_generator, prompt_generator, renderer, prompt, negative_prompt, width, height, rotate, flip, improve_prompt):
         self.prompt = prompt
         self.negative_prompt = negative_prompt
         self.render_size = (height, width) if rotate else (width, height)
@@ -13,13 +13,14 @@ class ImageProvider:
         self.prompt_generator = prompt_generator
         self.renderer = renderer
         self.running = False
+        self.improve_prompt = improve_prompt
 
     def run(self):
         self.running = True
         while self.running:
             if not self.renderer.full():
                 image = self.generate_image()
-                print(f'Generation info: {image.generation_info}')
+                print(f'Generation info:\n{image.generation_info}\n')
                 self.renderer.put(image)
             time.sleep(1)
 
@@ -32,10 +33,19 @@ class ImageProvider:
         return GeneratedImage(self.transform(scaled_image), image, generation_info)
 
     def generate_image(self):
-        prompt = self.prompt
-        if self.prompt_generator is not None:
-            prompt = self.prompt_generator.generate(self.render_size, prompt)
-        image_data, generation_info = self.image_generator.generate(self.render_size, prompt, self.negative_prompt)
+        prompt, negative_prompt = self.prompt_generator.process(
+            self.render_size,
+            self.prompt,
+            self.negative_prompt,
+            self.improve_prompt
+        )
+    
+        image_data, generation_info = self.image_generator.generate(
+            self.render_size,
+            prompt,
+            negative_prompt
+        )
+
         return self.create_image(image_data, generation_info)
 
     def transform(self, image):

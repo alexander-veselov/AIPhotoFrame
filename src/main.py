@@ -1,7 +1,7 @@
 import sys
 import argparse
 from application import Application
-from container import Container, override_display, override_image_generator, setup_prompt_generator
+from container import Container, override_display, override_image_generator
 from dependency_injector.wiring import Provide, inject
 from validate import valid_ip, valid_port
 
@@ -34,8 +34,6 @@ if __name__ == '__main__':
     container = Container()
     container.config.from_dict(vars(args))
     override_image_generator(container, args.generator)
-    if args.improve_prompt:
-        setup_prompt_generator(container)
     override_display(container, args.display)
     container.wire(modules=[__name__])
 

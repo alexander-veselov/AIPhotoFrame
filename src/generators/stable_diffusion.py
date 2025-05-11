@@ -4,8 +4,6 @@ from io import BytesIO
 from utils import calculate_generate_size
     
 class StableDiffusion:
-    DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
-    DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
     HIGHRES_SCALE = 1.5
 
     def __init__(self, ip, port):
@@ -15,8 +13,8 @@ class StableDiffusion:
     def post_txt2img(self, size, prompt, negative_prompt):
         width, height = calculate_generate_size(size)
         params = {
-            "prompt": StableDiffusion.DEFAULT_PROMPT + prompt,
-            "negative_prompt": StableDiffusion.DEFAULT_NEGATIVE_PROMPT + negative_prompt,
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
             "seed": -1,
             "steps": 20,
             "cfg_scale": 7,
