@@ -28,8 +28,8 @@ class ImageProvider:
 
     def create_image(self, image_data, generation_info):
         image = pygame.image.load(image_data)
-        image = pygame.transform.smoothscale(image, self.render_size)
-        return GeneratedImage(self.transform(image), generation_info)
+        scaled_image = pygame.transform.smoothscale(image, self.render_size)
+        return GeneratedImage(self.transform(scaled_image), image, generation_info)
 
     def generate_image(self):
         prompt = self.prompt
@@ -43,11 +43,4 @@ class ImageProvider:
             image = pygame.transform.rotate(image, -90)
         if self.flip:
             image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
-        return image
-
-    def reverse_transform(self, image):
-        if self.rotate:
-            image = pygame.transform.rotate(image, 90)
-        if self.flip:
-            image = pygame.transform.flip(image, flip_x=not self.rotate, flip_y=self.rotate)
         return image

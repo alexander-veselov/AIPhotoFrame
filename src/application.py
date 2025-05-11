@@ -10,7 +10,7 @@ class Application:
         self.renderer = renderer
         self.image_provider = image_provider
         self.image_provider_thread = threading.Thread(target=image_provider.run, daemon=True)
-        self.image_saver = ImageSaver(transform=self.image_provider.reverse_transform)
+        self.image_saver = ImageSaver()
 
     def run(self):
         self.running = True

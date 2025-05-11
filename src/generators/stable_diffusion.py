@@ -6,7 +6,7 @@ from utils import calculate_generate_size
 class StableDiffusion:
     DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
     DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
-    HIGHRES_SCALE = 2
+    HIGHRES_SCALE = 1.5
 
     def __init__(self, ip, port):
         self.txt2img_url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
@@ -20,8 +20,8 @@ class StableDiffusion:
             "seed": -1,
             "steps": 20,
             "cfg_scale": 7,
-            "width": width // StableDiffusion.HIGHRES_SCALE,
-            "height": height // StableDiffusion.HIGHRES_SCALE,
+            "width": width,
+            "height": height,
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",
         }
