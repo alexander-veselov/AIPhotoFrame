@@ -33,3 +33,5 @@ class Application:
         if event.key == pygame.K_a or event.key == pygame.K_PRINTSCREEN:
             image = self.renderer.get_image()
             self.image_saver.save_image(image)
+        elif event.key == pygame.K_d or event.key == pygame.K_SPACE:
+            self.renderer.next_image()

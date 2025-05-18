@@ -4,7 +4,7 @@ from io import BytesIO
 from utils import calculate_generate_size
     
 class StableDiffusion:
-    HIGHRES_SCALE = 1.5
+    HIGHRES_SCALE = 1.25
 
     def __init__(self, ip, port):
         self.txt2img_url = 'http://{0}:{1}/sdapi/v1/txt2img'.format(ip, port)
@@ -29,7 +29,8 @@ class StableDiffusion:
                 "enable_hr": True,
                 "hr_scale": StableDiffusion.HIGHRES_SCALE,
                 "hr_upscaler": "Latent",
-                "denoising_strength": 0.7
+                "denoising_strength": 0.7,
+                "hr_second_pass_steps": 10,
             })
         
         return requests.post(self.txt2img_url, json=params)

@@ -6,7 +6,7 @@ class PromptGenerator:
         self.url = 'http://{0}:{1}/z-tipo/generate-prompt'.format(ip, port)
 
     def process(self, size, prompt, negative_prompt, improve_prompt):
-        DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, score_6_up, score_5_up, score_4_up, "
+        DEFAULT_PROMPT = "score_9, score_8_up, score_7_up, "
         DEFAULT_NEGATIVE_PROMPT = "score_6, score_5, score_4, bad anatomy, "
         prompt = DEFAULT_PROMPT + prompt
         negative_prompt = DEFAULT_NEGATIVE_PROMPT + negative_prompt
@@ -23,7 +23,7 @@ class PromptGenerator:
             "top_p": 0.95,
             "top_k": 100,
             "tag_length": "long",
-            "ban_tags": "chibi, background, border",
+            "ban_tags": "chibi, loli, simple background, background, border, multiple views, animal, monochrome",
             "format_select": "tag only (DTG mode)"
         }
 

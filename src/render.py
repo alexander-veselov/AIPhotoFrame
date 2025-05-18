@@ -12,6 +12,9 @@ class EmptyRenderer:
     
     def get_image(self):
         return None
+    
+    def stop(self):
+        pass
 
 class StaticRenderer:
     def __init__(self, surface, fps, image, duration):
@@ -29,6 +32,9 @@ class StaticRenderer:
     
     def get_image(self):
         return self.image
+    
+    def stop(self):
+        self.frame = self.total_frames
 
 class FadeRenderer:
     MAX_TRANSPARENCY = 255
@@ -53,6 +59,9 @@ class FadeRenderer:
     
     def get_image(self):
         return self.image1
+
+    def stop(self):
+        pass
 
 class Renderer:
     RENDER_QUEUE_SIZE = 3
@@ -93,3 +102,7 @@ class Renderer:
 
     def get_image(self):
         return self.renderer.get_image()
+    
+    def next_image(self):
+        if not self.queue.empty():
+            self.renderer.stop()
