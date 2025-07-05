@@ -20,7 +20,6 @@ class ImageProvider:
         while self.running:
             if not self.renderer.full():
                 image = self.generate_image()
-                print(f'Generation info:\n{image.generation_info}\n')
                 self.renderer.put(image)
             time.sleep(1)
 

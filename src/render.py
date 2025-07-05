@@ -93,6 +93,8 @@ class Renderer:
         if not self.renderer.is_running():  
             if not self.queue.empty():
                 self.renderer = self.queue.get()
+                if isinstance(self.renderer, StaticRenderer):
+                    print(f'Generation info:\n{self.renderer.get_image().generation_info}\n')
         self.renderer.render()
         self.display.flip()
         self.clock.tick(self.fps)

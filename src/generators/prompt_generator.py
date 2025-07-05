@@ -23,7 +23,7 @@ class PromptGenerator:
             "top_p": 0.95,
             "top_k": 100,
             "tag_length": "short",
-            "ban_tags": "chibi, loli, simple background, background, border, multiple views, animal, monochrome",
+            "ban_tags": ".*background.*, border, multiple views, animal, .*sticker.*, .*nipple.*, monochrome, flat.*, furry, child, baby, chibi, loli",
             "format_select": "tag only (DTG mode)"
         }
 
