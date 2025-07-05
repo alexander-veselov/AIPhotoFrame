@@ -19,10 +19,10 @@ class PromptGenerator:
         params = {
             "prompt": prompt,
             "aspect_ratio ": width / height,
-            "temperature": 1.35,
+            "temperature": 0.7,
             "top_p": 0.95,
             "top_k": 100,
-            "tag_length": "long",
+            "tag_length": "short",
             "ban_tags": "chibi, loli, simple background, background, border, multiple views, animal, monochrome",
             "format_select": "tag only (DTG mode)"
         }
