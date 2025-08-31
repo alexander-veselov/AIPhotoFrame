@@ -64,7 +64,7 @@ class FadeRenderer:
         pass
 
 class Renderer:
-    RENDER_QUEUE_SIZE = 3
+    RENDER_QUEUE_SIZE = 2
 
     def __init__(self, display, fps, frame_duration, fade_duration):
         self.display = display
@@ -77,8 +77,8 @@ class Renderer:
         self.image = None
         self.mutex = Lock()
 
-    def full(self):
-        return self.queue.full()
+    def is_idle(self):
+        return self.queue.empty() and not self.renderer.is_running()
 
     def put(self, image: GeneratedImage):
         with self.mutex:
@@ -106,5 +106,4 @@ class Renderer:
         return self.renderer.get_image()
     
     def next_image(self):
-        if not self.queue.empty():
-            self.renderer.stop()
+        self.renderer.stop()

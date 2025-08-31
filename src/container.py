@@ -1,11 +1,10 @@
 from dependency_injector import containers, providers
 
 from application import Application
-from generators.mock_generator import MockGenerator
 from generators.stable_diffusion import StableDiffusion
 from generators.prompt_generator import PromptGenerator
 from display.pygame_display import PygameDisplay
-from image_provider import ImageProvider
+from image_provider import GeneratedImageProvider, MockImageProvider
 from render import Renderer
 
 class Container(containers.DeclarativeContainer):
@@ -39,10 +38,9 @@ class Container(containers.DeclarativeContainer):
     )
 
     image_provider = providers.Singleton(
-        ImageProvider,
+        GeneratedImageProvider,
         image_generator=image_generator,
         prompt_generator=prompt_generator,
-        renderer=renderer,
         prompt=config.prompt,
         negative_prompt=config.negative_prompt,
         width=config.width,
@@ -58,11 +56,16 @@ class Container(containers.DeclarativeContainer):
         image_provider=image_provider
     )
 
-def override_image_generator(container, image_generator):
-    if image_generator == 'mock_generator':
+def override_image_provider(container, image_provider):
+    if image_provider == 'mock':
         container.override_providers(
-            image_generator=providers.Singleton(MockGenerator)
-        )
+            image_provider=providers.Singleton(
+                MockImageProvider,
+                width=container.config.width,
+                height=container.config.height,
+                rotate=container.config.rotate,
+                flip=container.config.flip)
+            )
 
 def override_display(container, display):
     try:

@@ -1,5 +1,4 @@
 import pygame
-import threading
 from image_saver import ImageSaver
 
 class Application:
@@ -9,14 +8,16 @@ class Application:
         pygame.mouse.set_visible(False)
         self.renderer = renderer
         self.image_provider = image_provider
-        self.image_provider_thread = threading.Thread(target=image_provider.run, daemon=True)
         self.image_saver = ImageSaver()
 
     def run(self):
         self.running = True
-        self.image_provider_thread.start()
         while self.running:
             self.process_events(pygame.event.get())
+            if self.renderer.is_idle():
+                image = self.image_provider.provide()
+                if image is not None:
+                    self.renderer.put(image)
             self.renderer.render()
         self.renderer.reset()
         pygame.quit()
