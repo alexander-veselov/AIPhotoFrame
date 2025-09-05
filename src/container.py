@@ -4,7 +4,8 @@ from application import Application
 from generators.stable_diffusion import StableDiffusion
 from generators.prompt_generator import PromptGenerator
 from display.pygame_display import PygameDisplay
-from image_provider import GeneratedImageProvider, MockImageProvider
+from providers.mock_image_provider import MockImageProvider
+from providers.generated_image_provider import GeneratedImageProvider
 from render import Renderer
 
 class Container(containers.DeclarativeContainer):
