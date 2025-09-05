@@ -34,7 +34,8 @@ class ConcurrentImageProvider(ImageProvider):
         while self.running:
             if not self.queue.full():
                 image = self.concurrent_provide()
-                self.queue.put(image)
+                if image is not None:
+                    self.queue.put(image)
             time.sleep(0.5)
 
     def concurrent_provide(self):

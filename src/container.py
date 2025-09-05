@@ -6,6 +6,7 @@ from generators.prompt_generator import PromptGenerator
 from display.pygame_display import PygameDisplay
 from providers.mock_image_provider import MockImageProvider
 from providers.generated_image_provider import GeneratedImageProvider
+from providers.waifupics_image_provider import WaifupicsImageProvider
 from render import Renderer
 
 class Container(containers.DeclarativeContainer):
@@ -67,6 +68,15 @@ def override_image_provider(container, image_provider):
                 rotate=container.config.rotate,
                 flip=container.config.flip)
             )
+    elif image_provider == 'waifupics':
+        container.override_providers(
+            image_provider=providers.Singleton(
+                WaifupicsImageProvider,
+                width=container.config.width,
+                height=container.config.height,
+                rotate=container.config.rotate,
+                flip=container.config.flip)
+            )  
 
 def override_display(container, display):
     try:

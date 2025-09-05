@@ -89,7 +89,8 @@ class Renderer:
                 self.queue.put(FadeRenderer(surface, self.fps, previous_image, self.image, self.fade_duration))
             self.queue.put(StaticRenderer(surface, self.fps, self.image, self.frame_duration))
 
-    def render(self): 
+    def render(self):
+        self.display.reset()
         if not self.renderer.is_running():  
             if not self.queue.empty():
                 self.renderer = self.queue.get()

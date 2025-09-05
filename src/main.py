@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--prompt', type=str, required=False, default='1girl, random', help='Positive prompt.')
     parser.add_argument('--negative_prompt', type=str, required=False, default='nsfw, naked, nude', help='Negative prompt.')
     parser.add_argument('--display', type=str, required=False, default='pygame', choices=['pygame', 'ili9486', 'inky'], help='Display type.')
-    parser.add_argument('--image_provider', type=str, required=False, default='generate', choices=['generate', 'mock'], help='Image provider type.')
+    parser.add_argument('--image_provider', type=str, required=False, default='generate', choices=['generate', 'mock', 'waifupics'], help='Image provider type.')
     parser.add_argument('--fps', type=int, required=False, default=5, help='Display framerate')
     parser.add_argument('--frame_duration', type=int, required=False, default=60, help='Frame display duration in seconds')
     parser.add_argument('--fade_duration', type=int, required=False, default=15, help='Fade transition duration in seconds')
