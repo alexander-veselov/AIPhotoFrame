@@ -95,8 +95,7 @@ def override_display(container, display):
                 display=providers.Singleton(
                     InkyDisplay,
                     width=container.config.width,
-                    height=container.config.height,
-                    skip_first_frame=True
+                    height=container.config.height
                 )
             )
     except Exception as e:
