@@ -9,7 +9,7 @@ class DashboardStage(RenderStage):
         width, height = surface.get_size()
 
         bar_height = int(height * 0.12)
-        padding_x = int(width * 0.02)
+        padding_x = int(width * 0.03)
         text_color = (255, 255, 255)
 
         font_date = pygame.font.SysFont(None, int(height * 0.04))

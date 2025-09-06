@@ -11,6 +11,7 @@ from render.render import Renderer
 from render.render_pipeline import RenderPipeline
 from render.stages.dashboard_stage import DashboardStage
 from render.stages.flip_and_rotate_stage import FlipAndRotateStage
+from render.stages.calibrate_stage import CalibrateStage
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
@@ -113,4 +114,5 @@ def populate_dashboard_stages(container, dashboard):
     render_pipeline = container.render_pipeline()
     if dashboard:
         render_pipeline.add_stage(DashboardStage())
+    render_pipeline.add_stage(CalibrateStage(7, -35)) # TODO: make configurable
     render_pipeline.add_stage(FlipAndRotateStage(config.flip(), config.rotate()))
