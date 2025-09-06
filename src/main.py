@@ -14,22 +14,30 @@ if __name__ == '__main__':
         prog='AI Photo Frame',
         description='Displays AI generated images in photo frame'
     )
-    parser.add_argument('--ip', type=valid_ip, required=True, help='The IP address to connect to.')
-    parser.add_argument('--port', type=valid_port, required=True, help='The port number to connect to.')
-    parser.add_argument('--prompt', type=str, required=False, default='1girl, random', help='Positive prompt.')
-    parser.add_argument('--negative_prompt', type=str, required=False, default='nsfw, naked, nude', help='Negative prompt.')
-    parser.add_argument('--display', type=str, required=False, default='pygame', choices=['pygame', 'ili9486', 'inky'], help='Display type.')
-    parser.add_argument('--image_provider', type=str, required=False, default='generate', choices=['generate', 'mock', 'waifupics'], help='Image provider type.')
-    parser.add_argument('--fps', type=int, required=False, default=5, help='Display framerate')
-    parser.add_argument('--frame_duration', type=int, required=False, default=60, help='Frame display duration in seconds')
-    parser.add_argument('--fade_duration', type=int, required=False, default=15, help='Fade transition duration in seconds')
+
+    parser.add_argument('--display', type=str, default='pygame', choices=['pygame', 'ili9486', 'inky'], help='Display type.')
+    parser.add_argument('--fps', type=int, default=5, help='Display framerate')
     parser.add_argument('--fullscreen', action='store_true')
     parser.add_argument('--rotate', action='store_true')
     parser.add_argument('--flip', action='store_true')
-    parser.add_argument('--width', required=False, default=480, type=int)
-    parser.add_argument('--height', required=False, default=320, type=int)
-    parser.add_argument('--improve_prompt', action='store_true')
-    parser.add_argument('--dashboard', action='store_true')
+    parser.add_argument('--width', default=480, type=int)
+    parser.add_argument('--height', default=320, type=int)
+
+    parser.add_argument('--frame_duration', type=int, default=60, help='Frame display duration in seconds')
+    parser.add_argument('--fade_duration', type=int, default=15, help='Fade transition duration in seconds')
+
+    subparsers = parser.add_subparsers(dest='image_provider', required=True, help='Image provider type.')
+
+    generate_parser = subparsers.add_parser('generate')
+    generate_parser.add_argument('--ip', required=True, type=valid_ip, help='The IP address to connect to.')
+    generate_parser.add_argument('--port', required=True, type=valid_port, help='The port number to connect to.')
+    generate_parser.add_argument('--prompt', type=str, default='1girl, random', help='Positive prompt.')
+    generate_parser.add_argument('--negative_prompt', type=str, default='nsfw, naked, nude', help='Negative prompt.')
+    generate_parser.add_argument('--improve_prompt', action='store_true')
+
+    mock_parser = subparsers.add_parser('mock')
+    waifupics_parser = subparsers.add_parser('waifupics')
+
     args = parser.parse_args()
 
     container = Container()
