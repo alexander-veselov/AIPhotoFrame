@@ -2,26 +2,27 @@ import pygame
 from generated_image import GeneratedImage
 
 class ImageProvider:
-    def __init__(self, width, height, rotate, flip):
+    def __init__(self, width, height, rotate):
         self.render_size = (height, width) if rotate else (width, height)
-        self.rotate = rotate
-        self.flip = flip
 
     def provide(self):
         raise NotImplementedError()
     
     def crop(self, surface: pygame.Surface):
-        sw, sh = surface.get_size()
-        tw, th = self.render_size
-        if (tw > th) != (sw > sh) or sw == sh:
+        if (self.render_size[0] > self.render_size[1]) != (surface.get_width() > surface.get_height()) or \
+            surface.get_width() == surface.get_height():
+            print("Wrong orientation")
             return None
-        scale = max(tw / sw, th / sh)
-        new_w, new_h = int(sw * scale), int(sh * scale)
-        scaled = pygame.transform.smoothscale(surface, (new_w, new_h))
-        left = max(0, (new_w - tw) // 2)
-        top = max(0, (new_h - th) // 2)
-        cropped = scaled.subsurface(pygame.Rect(left, top, tw, th)).copy()
-        return cropped
+        scale = max(self.render_size[0] / surface.get_width(), self.render_size[1] / surface.get_height())
+        scaled = pygame.transform.smoothscale(surface, (round(surface.get_width() * scale), round(surface.get_height() * scale)))
+        left = abs(self.render_size[0] - scaled.get_width()) // 2
+        top = abs(self.render_size[1] - scaled.get_height()) // 2
+        right = left + self.render_size[0]
+        bottom = top + self.render_size[1]
+        if left >= right or top >= bottom:
+            return None
+        cropped = scaled.subsurface(pygame.Rect(left, top, right - left, bottom - top))
+        return cropped.copy()
 
     def create_image(self, image_data, generation_info):
         original_image = pygame.image.load(image_data)
@@ -29,8 +30,4 @@ class ImageProvider:
         image = self.crop(image)
         if image is None:
             return None
-        if self.rotate:
-            image = pygame.transform.rotate(image, -90)
-        if self.flip:
-            image = pygame.transform.flip(image, flip_x=self.rotate, flip_y=not self.rotate)
         return GeneratedImage(image, original_image, generation_info)

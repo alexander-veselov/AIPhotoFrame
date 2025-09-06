@@ -1,7 +1,7 @@
 import sys
 import argparse
 from application import Application
-from container import Container, override_display, override_image_provider, add_dashboard_stage
+from container import Container, override_display, override_image_provider, populate_dashboard_stages
 from dependency_injector.wiring import Provide, inject
 from validate import valid_ip, valid_port
 
@@ -45,8 +45,7 @@ if __name__ == '__main__':
     container.config.from_dict(vars(args))
     override_image_provider(container, args.image_provider)
     override_display(container, args.display)
-    if args.dashboard:
-        add_dashboard_stage(container)
+    populate_dashboard_stages(container, args.dashboard)
     container.wire(modules=[__name__])
 
     sys.exit(main())

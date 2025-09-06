@@ -5,8 +5,8 @@ from PIL import Image
 from providers.image_provider import ImageProvider
 
 class WaifupicsImageProvider(ImageProvider):
-    def __init__(self, width, height, rotate, flip):
-        super().__init__(width, height, rotate, flip)
+    def __init__(self, width, height, rotate):
+        super().__init__(width, height, rotate)
 
     def request_image(self):
         categories = ['waifu', 'neko']

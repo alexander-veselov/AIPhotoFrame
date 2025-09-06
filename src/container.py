@@ -10,6 +10,7 @@ from providers.waifupics_image_provider import WaifupicsImageProvider
 from render.render import Renderer
 from render.render_pipeline import RenderPipeline
 from render.stages.dashboard_stage import DashboardStage
+from render.stages.flip_and_rotate_stage import FlipAndRotateStage
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
@@ -54,7 +55,6 @@ class Container(containers.DeclarativeContainer):
         width=config.width,
         height=config.height,
         rotate=config.rotate,
-        flip=config.flip,
         improve_prompt=config.improve_prompt
     )
 
@@ -69,21 +69,21 @@ def override_image_provider(container, image_provider):
     if image_provider == 'mock':
         container.override_providers(
             image_provider=providers.Singleton(
-                MockImageProvider,
-                width=container.config.width,
-                height=container.config.height,
-                rotate=container.config.rotate,
-                flip=container.config.flip)
+                    MockImageProvider,
+                    width=container.config.width,
+                    height=container.config.height,
+                    rotate=container.config.rotate,
+                )
             )
     elif image_provider == 'waifupics':
         container.override_providers(
             image_provider=providers.Singleton(
                 WaifupicsImageProvider,
-                width=container.config.width,
-                height=container.config.height,
-                rotate=container.config.rotate,
-                flip=container.config.flip)
-            )  
+                    width=container.config.width,
+                    height=container.config.height,
+                    rotate=container.config.rotate,
+                )
+            )
 
 def override_display(container, display):
     try:
@@ -108,6 +108,9 @@ def override_display(container, display):
     except Exception as e:
         print(f'Failed to import {display} display: {e}')
 
-def add_dashboard_stage(container):
+def populate_dashboard_stages(container, dashboard):
+    config = container.config
     render_pipeline = container.render_pipeline()
-    render_pipeline.add_stage(DashboardStage())
+    if dashboard:
+        render_pipeline.add_stage(DashboardStage())
+    render_pipeline.add_stage(FlipAndRotateStage(config.flip(), config.rotate()))
