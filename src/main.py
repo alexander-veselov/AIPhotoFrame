@@ -1,7 +1,7 @@
 import sys
 import argparse
 from application import Application
-from container import Container, override_display, override_image_provider
+from container import Container, override_display, override_image_provider, add_dashboard_stage
 from dependency_injector.wiring import Provide, inject
 from validate import valid_ip, valid_port
 
@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--frame_duration', type=int, default=60, help='Frame display duration in seconds')
     parser.add_argument('--fade_duration', type=int, default=15, help='Fade transition duration in seconds')
+    parser.add_argument('--dashboard', action='store_true')
 
     subparsers = parser.add_subparsers(dest='image_provider', required=True, help='Image provider type.')
 
@@ -44,6 +45,8 @@ if __name__ == '__main__':
     container.config.from_dict(vars(args))
     override_image_provider(container, args.image_provider)
     override_display(container, args.display)
+    if args.dashboard:
+        add_dashboard_stage(container)
     container.wire(modules=[__name__])
 
     sys.exit(main())

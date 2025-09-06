@@ -13,4 +13,4 @@ class PygameDisplay:
         pygame.display.flip()
 
     def reset(self):
-        self.surface.fill((255, 255, 255))
+        self.surface.fill((0, 0, 0))

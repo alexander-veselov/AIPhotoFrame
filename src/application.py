@@ -2,12 +2,14 @@ import pygame
 from image_saver import ImageSaver
 
 class Application:
-    def __init__(self, renderer, image_provider):
+    def __init__(self, renderer, render_pipeline, image_provider):
         pygame.init()
+        pygame.font.init()
         pygame.display.set_caption('AI Photo Frame')
         pygame.mouse.set_visible(False)
         self.renderer = renderer
         self.image_provider = image_provider
+        self.render_pipeline = render_pipeline
         self.image_saver = ImageSaver()
 
     def run(self):
@@ -17,7 +19,8 @@ class Application:
             if self.renderer.is_idle():
                 image = self.image_provider.provide()
                 if image is not None:
-                    self.renderer.put(image)
+                    processed_image = self.render_pipeline.process(image)
+                    self.renderer.put(processed_image)
             self.renderer.render()
         self.renderer.reset()
         pygame.quit()
