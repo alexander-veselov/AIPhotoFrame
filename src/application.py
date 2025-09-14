@@ -39,7 +39,7 @@ class Application:
         if event.key == pygame.K_F1 or event.key == pygame.K_PRINTSCREEN:
             image = self.renderer.get_image()
             self.image_saver.save_image(image)
-        elif event.key == pygame.K_F3 or event.key == pygame.K_SPACE:
+        elif event.key == pygame.K_F3:
             self.config['dashboard'] = not self.config['dashboard']
             self.render_pipeline = RenderPipeline.from_config(self.config)
             self.renderer.next_image()

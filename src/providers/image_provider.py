@@ -14,7 +14,7 @@ class ImageProvider:
             print("Wrong orientation")
             return None
         scale = max(self.render_size[0] / surface.get_width(), self.render_size[1] / surface.get_height())
-        scaled = pygame.transform.smoothscale(surface, (round(surface.get_width() * scale), round(surface.get_height() * scale)))
+        scaled = pygame.transform.smoothscale(surface.convert_alpha(), (round(surface.get_width() * scale), round(surface.get_height() * scale)))
         left = abs(self.render_size[0] - scaled.get_width()) // 2
         top = abs(self.render_size[1] - scaled.get_height()) // 2
         right = left + self.render_size[0]

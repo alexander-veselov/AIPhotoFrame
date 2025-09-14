@@ -40,6 +40,8 @@ if __name__ == '__main__':
 
     mock_parser = subparsers.add_parser('mock')
     waifupics_parser = subparsers.add_parser('waifupics')
+    nekosbest_parser = subparsers.add_parser('nekosbest')
+    combined_parser = subparsers.add_parser('waifupics+nekosbest')
 
     args = parser.parse_args()
 

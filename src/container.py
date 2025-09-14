@@ -7,6 +7,8 @@ from display.pygame_display import PygameDisplay
 from providers.mock_image_provider import MockImageProvider
 from providers.generated_image_provider import GeneratedImageProvider
 from providers.waifupics_image_provider import WaifupicsImageProvider
+from providers.nekosbest_image_provider import NekosBestImageProvider
+from providers.combined_image_provider import CombinedImageProvider
 from render.render import Renderer
 
 class Container(containers.DeclarativeContainer):
@@ -77,6 +79,26 @@ def override_image_provider(container, image_provider):
                     rotate=container.config.rotate,
                 )
             )
+    elif image_provider == 'nekosbest':
+        container.override_providers(
+            image_provider=providers.Singleton(
+                NekosBestImageProvider,
+                    width=container.config.width,
+                    height=container.config.height,
+                    rotate=container.config.rotate,
+                )
+            )
+    elif image_provider == 'waifupics+nekosbest':
+        container.override_providers(
+            image_provider=providers.Singleton(
+                CombinedImageProvider,
+                    width=container.config.width,
+                    height=container.config.height,
+                    rotate=container.config.rotate,
+                )
+            )
+        container.image_provider().add_provider(WaifupicsImageProvider)
+        container.image_provider().add_provider(NekosBestImageProvider)
 
 def override_display(container, display):
     try:
