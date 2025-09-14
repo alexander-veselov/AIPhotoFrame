@@ -22,6 +22,8 @@ if __name__ == '__main__':
     parser.add_argument('--flip', action='store_true')
     parser.add_argument('--width', default=480, type=int)
     parser.add_argument('--height', default=320, type=int)
+    parser.add_argument('--shift_x', default=0, type=int)
+    parser.add_argument('--shift_y', default=0, type=int)
 
     parser.add_argument('--frame_duration', type=int, default=60, help='Frame display duration in seconds')
     parser.add_argument('--fade_duration', type=int, default=15, help='Fade transition duration in seconds')

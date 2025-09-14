@@ -13,7 +13,7 @@ class RenderPipeline:
         render_pipeline = RenderPipeline()
         if config['dashboard']:
             render_pipeline.add_stage(DashboardStage())
-        render_pipeline.add_stage(CalibrateStage(7, -35)) # TODO: make configurable
+        render_pipeline.add_stage(CalibrateStage(config['shift_x'], config['shift_y']))
         render_pipeline.add_stage(FlipAndRotateStage(config['flip'], config['rotate']))
         return render_pipeline
 
