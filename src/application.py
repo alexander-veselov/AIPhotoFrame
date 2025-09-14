@@ -1,16 +1,18 @@
 import pygame
 from image_saver import ImageSaver
+from render.render_pipeline import RenderPipeline
 
 class Application:
-    def __init__(self, renderer, render_pipeline, image_provider):
+    def __init__(self, config, renderer, image_provider):
         pygame.init()
         pygame.font.init()
         pygame.display.set_caption('AI Photo Frame')
         pygame.mouse.set_visible(False)
+        self.config = config
+        self.image_saver = ImageSaver()
         self.renderer = renderer
         self.image_provider = image_provider
-        self.render_pipeline = render_pipeline
-        self.image_saver = ImageSaver()
+        self.render_pipeline = RenderPipeline.from_config(config)
 
     def run(self):
         self.running = True
@@ -34,8 +36,12 @@ class Application:
                 self.process_key_event(event)
 
     def process_key_event(self, event):
-        if event.key == pygame.K_a or event.key == pygame.K_PRINTSCREEN:
+        if event.key == pygame.K_F1 or event.key == pygame.K_PRINTSCREEN:
             image = self.renderer.get_image()
             self.image_saver.save_image(image)
-        elif event.key == pygame.K_d or event.key == pygame.K_SPACE:
+        elif event.key == pygame.K_F3 or event.key == pygame.K_SPACE:
+            self.config['dashboard'] = not self.config['dashboard']
+            self.render_pipeline = RenderPipeline.from_config(self.config)
+            self.renderer.next_image()
+        elif event.key == pygame.K_F4 or event.key == pygame.K_SPACE:
             self.renderer.next_image()

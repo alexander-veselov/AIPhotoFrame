@@ -1,5 +1,5 @@
 import pygame
-from render.render_pipeline import RenderStage
+from render.render_stage import RenderStage
 from generated_image import GeneratedImage
 
 class CalibrateStage(RenderStage):

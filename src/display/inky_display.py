@@ -16,13 +16,13 @@ class Buttons(IntEnum):
 
 def to_pygame_button(button):
     if button == Buttons.A:
-        return pygame.K_a
+        return pygame.K_F1
     elif button == Buttons.B:
-        return pygame.K_b
+        return pygame.K_F2
     elif button == Buttons.C:
-        return pygame.K_c
+        return pygame.K_F3
     elif button == Buttons.D:
-        return pygame.K_d
+        return pygame.K_F4
     else:
         raise Exception('Wrong button: ' + str(button))
 

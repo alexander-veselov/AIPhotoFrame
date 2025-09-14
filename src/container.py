@@ -8,10 +8,6 @@ from providers.mock_image_provider import MockImageProvider
 from providers.generated_image_provider import GeneratedImageProvider
 from providers.waifupics_image_provider import WaifupicsImageProvider
 from render.render import Renderer
-from render.render_pipeline import RenderPipeline
-from render.stages.dashboard_stage import DashboardStage
-from render.stages.flip_and_rotate_stage import FlipAndRotateStage
-from render.stages.calibrate_stage import CalibrateStage
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
@@ -29,10 +25,6 @@ class Container(containers.DeclarativeContainer):
         fps=config.fps,
         frame_duration=config.frame_duration,
         fade_duration=config.fade_duration
-    )
-
-    render_pipeline = providers.Singleton(
-        RenderPipeline
     )
 
     image_generator = providers.Singleton(
@@ -61,8 +53,8 @@ class Container(containers.DeclarativeContainer):
 
     application = providers.Singleton(
         Application,
+        config=config,
         renderer=renderer,
-        render_pipeline=render_pipeline,
         image_provider=image_provider
     )
 
@@ -108,11 +100,3 @@ def override_display(container, display):
             )
     except Exception as e:
         print(f'Failed to import {display} display: {e}')
-
-def populate_dashboard_stages(container, dashboard):
-    config = container.config
-    render_pipeline = container.render_pipeline()
-    if dashboard:
-        render_pipeline.add_stage(DashboardStage())
-    render_pipeline.add_stage(CalibrateStage(7, -35)) # TODO: make configurable
-    render_pipeline.add_stage(FlipAndRotateStage(config.flip(), config.rotate()))
