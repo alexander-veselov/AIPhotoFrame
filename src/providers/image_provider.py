@@ -8,13 +8,18 @@ class ImageProvider:
     def provide(self):
         raise NotImplementedError()
     
+    def convert_alpha(self, surface):
+        new_surface = pygame.Surface(surface.get_size(), flags=pygame.SRCALPHA, depth=32)
+        new_surface.blit(surface, (0, 0))
+        return new_surface
+
     def crop(self, surface: pygame.Surface):
         if (self.render_size[0] > self.render_size[1]) != (surface.get_width() > surface.get_height()) or \
             surface.get_width() == surface.get_height():
             print("Wrong orientation")
             return None
         scale = max(self.render_size[0] / surface.get_width(), self.render_size[1] / surface.get_height())
-        scaled = pygame.transform.smoothscale(surface.convert_alpha(), (round(surface.get_width() * scale), round(surface.get_height() * scale)))
+        scaled = pygame.transform.smoothscale(self.convert_alpha(surface), (round(surface.get_width() * scale), round(surface.get_height() * scale)))
         left = abs(self.render_size[0] - scaled.get_width()) // 2
         top = abs(self.render_size[1] - scaled.get_height()) // 2
         right = left + self.render_size[0]
