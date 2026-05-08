@@ -1,4 +1,8 @@
 import sys
+if sys.platform == 'win32':
+    import os
+    os.environ["SDL_WINDOWS_DPI_AWARENESS"] = "permonitorv2"
+
 import argparse
 from application import Application
 from container import Container, override_display, override_image_provider
