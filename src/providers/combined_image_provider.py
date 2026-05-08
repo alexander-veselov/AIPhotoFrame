@@ -1,3 +1,4 @@
+import logging
 import random
 from providers.image_provider import ImageProvider
 
@@ -14,7 +15,7 @@ class CombinedImageProvider(ImageProvider):
 
     def provide(self):
         if len(self.providers) == 0:
-            print("No providers")
+            logging.error("No providers")
             return None
         weights, values = zip(*self.providers)
         provider = random.choices(values, weights=weights, k=1)[0]

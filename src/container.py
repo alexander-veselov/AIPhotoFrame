@@ -1,3 +1,4 @@
+import logging
 from dependency_injector import containers, providers
 
 from application import Application
@@ -112,4 +113,4 @@ def override_display(container, display):
                 )
             )
     except Exception as e:
-        print(f'Failed to import {display} display: {e}')
+        logging.error(f'Failed to import {display} display: {e}')

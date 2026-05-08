@@ -1,3 +1,4 @@
+import logging
 import pygame
 from generated_image import GeneratedImage
 
@@ -16,7 +17,7 @@ class ImageProvider:
     def crop(self, surface: pygame.Surface):
         if (self.render_size[0] > self.render_size[1]) != (surface.get_width() > surface.get_height()) or \
             surface.get_width() == surface.get_height():
-            print("Wrong orientation")
+            logging.error("Wrong orientation")
             return None
         scale = max(self.render_size[0] / surface.get_width(), self.render_size[1] / surface.get_height())
         scaled = pygame.transform.smoothscale(self.convert_alpha(surface), (round(surface.get_width() * scale), round(surface.get_height() * scale)))

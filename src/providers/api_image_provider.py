@@ -1,3 +1,4 @@
+import logging
 import time
 import json
 import requests
@@ -34,13 +35,13 @@ class ApiImageProvider(ImageProvider):
             )
 
             if response.status_code != 200:
-                print(f"API error {response.status_code} for {response.url}")
+                logging.error(f"API error {response.status_code} for {response.url}")
                 return None
 
             return response.json()
 
         except Exception as e:
-            print(f"API request failed: {e}")
+            logging.error(f"API request failed: {e}")
             return None
 
     def get_bytes(self, url: str):
@@ -48,13 +49,13 @@ class ApiImageProvider(ImageProvider):
             response = requests.get(url, timeout=self.timeout)
 
             if response.status_code != 200:
-                print(f"Image download error {response.status_code}")
+                logging.error(f"Image download error {response.status_code}")
                 return None
 
             return BytesIO(response.content)
 
         except Exception as e:
-            print(f"Download failed: {e}")
+            logging.error(f"Download failed: {e}")
             return None
 
     def request_image(self):

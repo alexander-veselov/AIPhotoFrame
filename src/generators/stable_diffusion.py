@@ -1,3 +1,4 @@
+import logging
 import requests
 import base64
 from io import BytesIO
@@ -42,7 +43,7 @@ class StableDiffusion:
     def generate(self, size, prompt, negative_prompt=""):
         txt2img_response = self.post_txt2img(size, prompt, negative_prompt)
         if txt2img_response.status_code != 200:
-            print("txt2img response error: {0}".format(txt2img_response.status_code))
+            logging.error("txt2img response error: {0}".format(txt2img_response.status_code))
             return None
 
         image_data = base64.b64decode(txt2img_response.json()["images"][0])
@@ -52,6 +53,6 @@ class StableDiffusion:
         if png_info_response.status_code == 200:
             generation_info = png_info_response.json()["info"]
         else:
-            print("png_info response error: {0}".format(png_info_response.status_code))
+            logging.error("png_info response error: {0}".format(png_info_response.status_code))
 
         return BytesIO(image_data), generation_info

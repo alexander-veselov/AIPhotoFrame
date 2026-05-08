@@ -1,3 +1,4 @@
+import logging
 import random
 from providers.api_image_provider import ApiImageProvider, ImageResult
 
@@ -29,5 +30,5 @@ class WaifuimImageProvider(ApiImageProvider):
                 source=data["items"][0].get("source", None)
             )
         except (KeyError, IndexError):
-            print("waifu.im invalid response format")
+            logging.error("waifu.im invalid response format")
             return None

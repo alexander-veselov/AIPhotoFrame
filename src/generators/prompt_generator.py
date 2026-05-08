@@ -1,3 +1,4 @@
+import logging
 import requests
 from utils import calculate_generate_size
     
@@ -29,7 +30,7 @@ class PromptGenerator:
 
         response = requests.post(self.url, json=params)
         if response.status_code != 200:
-            print("response error: {0}".format(response.status_code))
+            logging.error("response error: {0}".format(response.status_code))
             return None
 
         response_json = response.json()

@@ -1,3 +1,4 @@
+import logging
 import random
 from providers.api_image_provider import ApiImageProvider, ImageResult
 
@@ -23,5 +24,5 @@ class NekosBestImageProvider(ApiImageProvider):
                 source=item.get("source_url", None)
             )
         except (KeyError, IndexError):
-            print("nekos.best invalid response format")
+            logging.error("nekos.best invalid response format")
             return None

@@ -1,16 +1,52 @@
 import sys
+import os
 if sys.platform == 'win32':
-    import os
     os.environ["SDL_WINDOWS_DPI_AWARENESS"] = "permonitorv2"
 
+import logging
 import argparse
+from datetime import datetime
 from application import Application
 from container import Container, override_display, override_image_provider
 from dependency_injector.wiring import Provide, inject
 from validate import valid_ip, valid_port
 
+def setup_logging():
+    save_dir = os.path.join(
+        os.path.expanduser("~"),
+        "Pictures/AIPhotoFrame"
+    )
+
+    log_dir = os.path.join(save_dir, "logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    log_file = os.path.join(
+        log_dir,
+        datetime.now().strftime("%Y%m%d_%H%M%S.log")
+    )
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        handlers=[
+            logging.FileHandler(log_file, encoding="utf-8"),
+            logging.StreamHandler()
+        ],
+        force=True
+    )
+
+    logging.info(f"Logging started: {log_file}")
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    logging.critical(
+        "Uncaught exception",
+        exc_info=(exc_type, exc_value, exc_traceback)
+    )
+
 @inject
 def main(application: Application = Provide[Container.application]):
+    sys.excepthook = handle_exception
+    setup_logging()
     return application.run()
 
 if __name__ == '__main__':
