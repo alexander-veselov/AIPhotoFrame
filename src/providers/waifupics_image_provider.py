@@ -1,11 +1,11 @@
 import random
-from providers.api_image_provider import ApiImageProvider
+from providers.api_image_provider import ApiImageProvider, ImageResult
 
 class WaifupicsImageProvider(ApiImageProvider):
     def __init__(self, width, height, rotate):
         super().__init__(width, height, rotate, base_url="https://api.waifu.pics/sfw")
 
-    def request_image_url(self):
+    def request_image(self):
         categories = ['waifu', 'neko']
         category = random.choices(categories, [0.7, 0.3])[0]
 
@@ -14,4 +14,7 @@ class WaifupicsImageProvider(ApiImageProvider):
         if not data:
             return None
 
-        return data.get("url")
+        return ImageResult(
+            url=data.get("url"),
+            source=None
+        )

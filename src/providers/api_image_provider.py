@@ -1,8 +1,14 @@
 import time
+import json
 import requests
 from io import BytesIO
 from urllib.parse import urljoin
 from providers.image_provider import ImageProvider
+
+class ImageResult:
+    def __init__(self, url: str, source: str = None):
+        self.url = url
+        self.source = source
 
 class ApiImageProvider(ImageProvider):
     def __init__(self, width, height, rotate, base_url: str, timeout=10):
@@ -51,7 +57,7 @@ class ApiImageProvider(ImageProvider):
             print(f"Download failed: {e}")
             return None
 
-    def request_image_url(self):
+    def request_image(self):
         raise NotImplementedError()
 
     def _on_failure(self):
@@ -71,13 +77,13 @@ class ApiImageProvider(ImageProvider):
         if time.time() < self.next_retry_time:
             return None
 
-        image_url = self.request_image_url()
+        result = self.request_image()
 
-        if not image_url:
+        if not result:
             self._on_failure()
             return None
 
-        image_data = self.get_bytes(image_url)
+        image_data = self.get_bytes(result.url)
 
         if not image_data:
             self._on_failure()
@@ -86,4 +92,11 @@ class ApiImageProvider(ImageProvider):
         self.failure_count = 0
         self.next_retry_time = 0
 
-        return self.create_image(image_data, image_url)
+        image_info = json.dumps({
+            "url": result.url,
+            "source": result.source
+        })
+
+        image = self.create_image(image_data, image_info)
+
+        return image
