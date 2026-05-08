@@ -13,7 +13,7 @@ class NekosBestImageProvider(ImageProvider):
         api = f'https://nekos.best/api/v2/{category}'
         response = requests.get(api)
         if response.status_code != 200:
-            print("waifu.pics response error: {0}".format(response.status_code))
+            print("nekos.best response error: {0}".format(response.status_code))
             return None
         return response.json()['results'][0]['url']
     
