@@ -43,15 +43,27 @@ if __name__ == '__main__':
     generate_parser.add_argument('--improve_prompt', action='store_true')
 
     mock_parser = subparsers.add_parser('mock')
-    waifupics_parser = subparsers.add_parser('waifupics')
-    nekosbest_parser = subparsers.add_parser('nekosbest')
-    combined_parser = subparsers.add_parser('waifupics+nekosbest')
+
+    providers_parser = subparsers.add_parser('providers')
+    providers_parser.add_argument(
+        'providers',
+        nargs='+',
+        choices=[
+            'waifupics',
+            'nekosbest',
+            'waifuim',
+        ]
+    )
 
     args = parser.parse_args()
 
     container = Container()
     container.config.from_dict(vars(args))
-    override_image_provider(container, args.image_provider)
+    override_image_provider(
+        container,
+        args.image_provider,
+        getattr(args, 'providers', None)
+    )
     override_display(container, args.display)
     container.wire(modules=[__name__])
 

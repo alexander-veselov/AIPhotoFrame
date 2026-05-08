@@ -7,6 +7,7 @@ from display.pygame_display import PygameDisplay
 from providers.mock_image_provider import MockImageProvider
 from providers.generated_image_provider import GeneratedImageProvider
 from providers.waifupics_image_provider import WaifupicsImageProvider
+from providers.waifuim_image_provider import WaifuimImageProvider
 from providers.nekosbest_image_provider import NekosBestImageProvider
 from providers.combined_image_provider import CombinedImageProvider
 from render.render import Renderer
@@ -60,45 +61,35 @@ class Container(containers.DeclarativeContainer):
         image_provider=image_provider
     )
 
-def override_image_provider(container, image_provider):
+def override_image_provider(container, image_provider, provider_names=None):
     if image_provider == 'mock':
         container.override_providers(
             image_provider=providers.Singleton(
-                    MockImageProvider,
-                    width=container.config.width,
-                    height=container.config.height,
-                    rotate=container.config.rotate,
-                )
+                MockImageProvider,
+                width=container.config.width,
+                height=container.config.height,
+                rotate=container.config.rotate,
             )
-    elif image_provider == 'waifupics':
+        )
+    elif image_provider == 'providers':
+        IMAGE_PROVIDERS = {
+            'waifupics': WaifupicsImageProvider,
+            'nekosbest': NekosBestImageProvider,
+            'waifuim': WaifuimImageProvider,
+        }
+
+        combined = CombinedImageProvider(
+            width=container.config.width(),
+            height=container.config.height(),
+            rotate=container.config.rotate(),
+        )
+
+        for name in provider_names:
+            combined.add_provider(IMAGE_PROVIDERS[name])
+
         container.override_providers(
-            image_provider=providers.Singleton(
-                WaifupicsImageProvider,
-                    width=container.config.width,
-                    height=container.config.height,
-                    rotate=container.config.rotate,
-                )
-            )
-    elif image_provider == 'nekosbest':
-        container.override_providers(
-            image_provider=providers.Singleton(
-                NekosBestImageProvider,
-                    width=container.config.width,
-                    height=container.config.height,
-                    rotate=container.config.rotate,
-                )
-            )
-    elif image_provider == 'waifupics+nekosbest':
-        container.override_providers(
-            image_provider=providers.Singleton(
-                CombinedImageProvider,
-                    width=container.config.width,
-                    height=container.config.height,
-                    rotate=container.config.rotate,
-                )
-            )
-        container.image_provider().add_provider(WaifupicsImageProvider)
-        container.image_provider().add_provider(NekosBestImageProvider)
+            image_provider=providers.Object(combined)
+        )
 
 def override_display(container, display):
     try:
