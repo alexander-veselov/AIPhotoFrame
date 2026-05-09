@@ -10,6 +10,7 @@ from providers.generated_image_provider import GeneratedImageProvider
 from providers.waifupics_image_provider import WaifupicsImageProvider
 from providers.waifuim_image_provider import WaifuimImageProvider
 from providers.nekosbest_image_provider import NekosBestImageProvider
+from providers.danbooru_image_provider import DanbooruImageProvider
 from providers.combined_image_provider import CombinedImageProvider
 from render.render import Renderer
 
@@ -77,6 +78,7 @@ def override_image_provider(container, image_provider, provider_names=None):
             'waifupics': WaifupicsImageProvider,
             'nekosbest': NekosBestImageProvider,
             'waifuim': WaifuimImageProvider,
+            'danbooru': DanbooruImageProvider,
         }
 
         combined = CombinedImageProvider(

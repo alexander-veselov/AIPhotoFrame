@@ -88,6 +88,7 @@ if __name__ == '__main__':
             'waifupics',
             'nekosbest',
             'waifuim',
+            'danbooru',
         ]
     )
 

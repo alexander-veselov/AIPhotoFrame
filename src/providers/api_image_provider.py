@@ -23,16 +23,24 @@ class ApiImageProvider(ImageProvider):
 
     def _build_url(self, endpoint: str) -> str:
         return urljoin(self.base_url + "/", endpoint.lstrip("/"))
+    
+    def _request(self, url: str, params: dict = None):
+        headers = {
+            "User-Agent": "curl/8.0",
+            "Accept": "application/json"
+        }
+        return requests.get(
+            url,
+            params=params or {},
+            timeout=self.timeout,
+            headers=headers
+        )
 
     def get_json(self, endpoint: str, params: dict = None):
         url = self._build_url(endpoint)
 
         try:
-            response = requests.get(
-                url,
-                params=params or {},
-                timeout=self.timeout
-            )
+            response = self._request(url, params)
 
             if response.status_code != 200:
                 logging.error(f"API error {response.status_code} for {response.url}")
@@ -46,7 +54,7 @@ class ApiImageProvider(ImageProvider):
 
     def get_bytes(self, url: str):
         try:
-            response = requests.get(url, timeout=self.timeout)
+            response = self._request(url)
 
             if response.status_code != 200:
                 logging.error(f"Image download error {response.status_code}")
@@ -91,7 +99,7 @@ class ApiImageProvider(ImageProvider):
             return None
 
         self.failure_count = 0
-        self.next_retry_time = 0
+        self.next_retry_time = time.time() + 1.0
 
         image_info = json.dumps({
             "url": result.url,
