@@ -1,10 +1,17 @@
 import pygame
 import datetime
+from render.render_config import RenderConfig
 from render.render_stage import RenderStage
 from generated_image import GeneratedImage
 
 class DashboardStage(RenderStage):
+    def __init__(self, render_config: RenderConfig):
+        super().__init__(render_config)
+
     def process(self, image: GeneratedImage) -> GeneratedImage:
+        if not self.render_config.dashboard:
+            return image
+
         surface = image.copy()
         width, height = surface.get_size()
 

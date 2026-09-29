@@ -1,21 +1,17 @@
 from generated_image import GeneratedImage
+from render.render_config import RenderConfig
 from render.render_stage import RenderStage
 from render.stages.dashboard_stage import DashboardStage
 from render.stages.flip_and_rotate_stage import FlipAndRotateStage
 from render.stages.calibrate_stage import CalibrateStage
 
 class RenderPipeline:
-    def __init__(self):
+    def __init__(self, render_config: RenderConfig):
         self.stages = []
-
-    @staticmethod
-    def from_config(config):
-        render_pipeline = RenderPipeline()
-        if config['dashboard']:
-            render_pipeline.add_stage(DashboardStage())
-        render_pipeline.add_stage(CalibrateStage(config['shift_x'], config['shift_y']))
-        render_pipeline.add_stage(FlipAndRotateStage(config['flip'], config['rotate']))
-        return render_pipeline
+        self.render_config = render_config
+        self.add_stage(DashboardStage(render_config))
+        self.add_stage(CalibrateStage(render_config))
+        self.add_stage(FlipAndRotateStage(render_config))
 
     def add_stage(self, stage: RenderStage):
         self.stages.append(stage)

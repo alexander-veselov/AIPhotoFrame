@@ -1,13 +1,14 @@
 class RenderConfig:
-    def __init__(self, width, height, rotate, flip, shift_x, shift_y):
+    def __init__(self, width, height, rotate, flip, width_shift, height_shift, dashboard):
         self.width = width
         self.height = height
         self.rotate = rotate
         self.flip = flip
-        self.shift_x = shift_x
-        self.shift_y = shift_y
+        self.width_shift = width_shift
+        self.height_shift = height_shift
+        self.dashboard = dashboard
     
     def render_size(self):
-        width = self.width - abs(self.shift_x)
-        height = self.height - abs(self.shift_y)
+        width = self.width - abs(self.width_shift)
+        height = self.height - abs(self.height_shift)
         return (height, width) if self.rotate else (width, height)

@@ -31,8 +31,9 @@ class Container(containers.DeclarativeContainer):
         height=config.height,
         rotate=config.rotate,
         flip=config.flip,
-        shift_x=config.shift_x,
-        shift_y=config.shift_y,
+        width_shift=config.width_shift,
+        height_shift=config.height_shift,
+        dashboard=config.dashboard
     )
 
     renderer = providers.Singleton(
@@ -67,7 +68,7 @@ class Container(containers.DeclarativeContainer):
 
     application = providers.Singleton(
         Application,
-        config=config,
+        render_config=render_config,
         renderer=renderer,
         image_provider=image_provider
     )
