@@ -1,10 +1,12 @@
 import logging
 import pygame
 from generated_image import GeneratedImage
+from render.render_config import RenderConfig
 
 class ImageProvider:
-    def __init__(self, width, height, rotate):
-        self.render_size = (height, width) if rotate else (width, height)
+    def __init__(self, render_config: RenderConfig):
+        self.render_config = render_config
+        self.render_size = render_config.render_size()
 
     def provide(self):
         raise NotImplementedError()

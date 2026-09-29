@@ -13,6 +13,7 @@ from providers.nekosbest_image_provider import NekosBestImageProvider
 from providers.danbooru_image_provider import DanbooruImageProvider
 from providers.combined_image_provider import CombinedImageProvider
 from render.render import Renderer
+from render.render_config import RenderConfig
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
@@ -22,6 +23,16 @@ class Container(containers.DeclarativeContainer):
         width=config.width,
         height=config.height,
         fullscreen=config.fullscreen
+    )
+
+    render_config = providers.Singleton(
+        RenderConfig,
+        width=config.width,
+        height=config.height,
+        rotate=config.rotate,
+        flip=config.flip,
+        shift_x=config.shift_x,
+        shift_y=config.shift_y,
     )
 
     renderer = providers.Singleton(
@@ -46,13 +57,11 @@ class Container(containers.DeclarativeContainer):
 
     image_provider = providers.Singleton(
         GeneratedImageProvider,
+        render_config=render_config,
         image_generator=image_generator,
         prompt_generator=prompt_generator,
         prompt=config.prompt,
         negative_prompt=config.negative_prompt,
-        width=config.width,
-        height=config.height,
-        rotate=config.rotate,
         improve_prompt=config.improve_prompt
     )
 
@@ -68,9 +77,7 @@ def override_image_provider(container, image_provider, provider_names=None):
         container.override_providers(
             image_provider=providers.Singleton(
                 MockImageProvider,
-                width=container.config.width,
-                height=container.config.height,
-                rotate=container.config.rotate,
+                render_config=container.render_config()
             )
         )
     elif image_provider == 'providers':
@@ -82,9 +89,7 @@ def override_image_provider(container, image_provider, provider_names=None):
         }
 
         combined = CombinedImageProvider(
-            width=container.config.width(),
-            height=container.config.height(),
-            rotate=container.config.rotate(),
+            render_config=container.render_config()
         )
 
         for name in provider_names:

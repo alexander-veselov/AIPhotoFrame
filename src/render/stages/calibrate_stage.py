@@ -10,7 +10,7 @@ class CalibrateStage(RenderStage):
     def process(self, image: GeneratedImage) -> GeneratedImage:
         original = image.copy()
         width, height = original.get_size()
-        shifted_surface = pygame.Surface((width, height))
+        shifted_surface = pygame.Surface((width + abs(self.shift_x), height + abs(self.shift_y)))
         shifted_surface.fill((0, 0, 0))
-        shifted_surface.blit(original, (self.shift_x, self.shift_y))
+        shifted_surface.blit(original, (max(0, self.shift_x), max(0, self.shift_y)))
         return GeneratedImage(shifted_surface, image.original_image, image.generation_info)

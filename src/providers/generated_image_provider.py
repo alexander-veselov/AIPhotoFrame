@@ -1,8 +1,9 @@
 from providers.concurrent_image_provider import ConcurrentImageProvider
+from render.render_config import RenderConfig
 
 class GeneratedImageProvider(ConcurrentImageProvider):
-    def __init__(self, width, height, rotate, image_generator, prompt_generator, prompt, negative_prompt, improve_prompt):
-        super().__init__(width, height, rotate)
+    def __init__(self, render_config: RenderConfig, image_generator, prompt_generator, prompt, negative_prompt, improve_prompt):
+        super().__init__(render_config)
         self.image_generator = image_generator
         self.prompt_generator = prompt_generator
         self.prompt = prompt

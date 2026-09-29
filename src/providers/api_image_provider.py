@@ -5,6 +5,7 @@ import requests
 from io import BytesIO
 from urllib.parse import urljoin
 from providers.image_provider import ImageProvider
+from render.render_config import RenderConfig
 
 class ImageResult:
     def __init__(self, url: str, source: str = None):
@@ -12,8 +13,8 @@ class ImageResult:
         self.source = source
 
 class ApiImageProvider(ImageProvider):
-    def __init__(self, width, height, rotate, base_url: str, timeout=10):
-        super().__init__(width, height, rotate)
+    def __init__(self, render_config: RenderConfig, base_url: str, timeout=10):
+        super().__init__(render_config)
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
 

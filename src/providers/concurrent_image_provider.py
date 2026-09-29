@@ -2,10 +2,11 @@ import time
 import queue
 import threading
 from providers.image_provider import ImageProvider
+from render.render_config import RenderConfig
 
 class ConcurrentImageProvider(ImageProvider):
-    def __init__(self, width, height, rotate):
-        super().__init__(width, height, rotate)
+    def __init__(self, render_config: RenderConfig):
+        super().__init__(render_config)
         self.queue = queue.Queue(maxsize=3)
         self.running = False
         self.thread = None
